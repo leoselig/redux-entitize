@@ -1,0 +1,115 @@
+---
+extends: "eslint:recommended"
+parser: "babel-eslint"
+
+plugins:
+- import
+- prettier
+
+rules:
+  brace-style: [2, "1tbs"]
+  class-methods-use-this: 2
+  default-case: 2
+  no-else-return: 2
+  guard-for-in: 2
+  indent: [2, 2]
+  no-return-await: 2
+  no-catch-shadow: 2
+  no-undefined: 2
+  array-bracket-spacing: [2, "always"]
+  comma-spacing: 2
+  computed-property-spacing: 2
+  func-call-spacing: 2
+  func-style: [2, "declaration"]
+  key-spacing: 2
+  line-comment-position: 2
+
+  # ECMAScript 6+ rules
+  linebreak-style: 2
+  lines-around-comment: 2
+  max-len: 2
+  new-parens: 2
+  newline-after-var: 2
+  newline-before-return: 2
+  no-array-constructor: 2
+  no-bitwise: 2
+  no-continue: 2
+  no-lonely-if: 2
+  no-nested-ternary: 2
+  no-new-object: 2
+  no-trailing-spaces: 2
+  no-underscore-dangle: 2
+  no-unneeded-ternary: 2
+  no-whitespace-before-property: 2
+  object-property-newline: 2
+  semi: 2
+  space-before-blocks: 2
+  space-in-parens: 2
+  space-infix-ops: 2
+  space-unary-ops: 2
+  spaced-comment: 2
+  arrow-body-style: 2
+  arrow-parens: 2
+  arrow-spacing: 2
+  constructor-super: 2
+  generator-star-spacing: 2
+  no-class-assign: 2
+  no-confusing-arrow: 2
+  no-const-assign: 2
+  no-dupe-class-members: 2
+  no-duplicate-imports: 2
+  no-new-symbol: 2
+  no-this-before-super: 2
+  no-useless-computed-key: 2
+  no-useless-constructor: 2
+  no-useless-rename: 2
+  no-var: 2
+  object-shorthand: 2
+  prefer-arrow-callback: 2
+  prefer-const: 2
+  prefer-numeric-literals: 2
+  prefer-rest-params: 2
+  prefer-spread: 2
+  prefer-template: 2
+  require-yield: 2
+  rest-spread-spacing: 2
+  symbol-description: 2
+  template-curly-spacing: 2
+  yield-star-spacing: 2
+  no-multiple-empty-lines: [2,
+    max: 2
+  ]
+  object-curly-spacing: [2, "always"]
+  quote-props: [2, "consistent-as-needed"]
+  quotes: [2, "single"]
+  space-before-function-paren: [2, {
+    anonymous: "always",
+    named: "never",
+    asyncArrow: "always"
+  }]
+
+  # eslint-plugin-import
+  import/no-unresolved: 2
+  import/named: 2
+  import/default: 2
+  import/namespace: 2
+  import/no-absolute-path: 2
+  import/no-dynamic-require: 2
+  import/no-webpack-loader-syntax: 2
+  import/export: 2
+  import/no-named-as-default: 2
+  import/no-named-as-default-member: 2
+  import/no-deprecated: 2
+  import/no-mutable-exports: 2
+  import/unambiguous: 2
+  import/no-commonjs: 2
+  import/no-amd: 2
+  import/first: 2
+  import/no-duplicates: 2
+  import/no-namespace: 2
+  import/order: [2, {"newlines-between": "always"}]
+  import/newline-after-import: 2
+  import/no-named-default: 2
+
+  # eslint-plugin-prettier
+  prettier/prettier: error
