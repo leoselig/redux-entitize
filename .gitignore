@@ -1,2 +1,5 @@
 # Node.js/npm/yarn
 /node_modules
+
+# Build output
+/lib
