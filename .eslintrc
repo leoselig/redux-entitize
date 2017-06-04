@@ -2,6 +2,9 @@
 extends: "eslint:recommended"
 parser: "babel-eslint"
 
+env:
+  jest: true
+
 plugins:
 - import
 - prettier
@@ -81,7 +84,7 @@ rules:
   ]
   object-curly-spacing: [2, "always"]
   quote-props: [2, "consistent-as-needed"]
-  quotes: [2, "single"]
+  quotes: [2, "double"]
   space-before-function-paren: [2, {
     anonymous: "always",
     named: "never",
