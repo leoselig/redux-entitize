@@ -9,7 +9,9 @@
   "scripts": {
     "build": "babel src/ --out-dir lib/",
     "test-dev": "jest --config=jest.config.json --notify --watch",
-    "lint-fix": "yarn run eslint . -- --fix"
+    "lint-fix": "yarn run eslint . -- --fix",
+    "flow": "flow",
+    "flow-typed": "flow-typed"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -24,5 +26,9 @@
     "jest": "^20.0.4",
     "prettier": "^1.4.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "eslint-plugin-flowtype": "^2.34.0",
+    "flow-bin": "^0.47.0",
+    "flow-typed": "^2.1.2"
+  }
 }
