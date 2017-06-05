@@ -16,11 +16,10 @@ rules:
   default-case: 2
   no-else-return: 2
   guard-for-in: 2
-  indent: [2, 2]
   no-return-await: 2
   no-catch-shadow: 2
   no-undefined: 2
-  array-bracket-spacing: [2, "always"]
+  array-bracket-spacing: [2, "never"]
   comma-spacing: 2
   computed-property-spacing: 2
   func-call-spacing: 2
@@ -42,7 +41,6 @@ rules:
   no-nested-ternary: 2
   no-new-object: 2
   no-trailing-spaces: 2
-  no-underscore-dangle: 2
   no-unneeded-ternary: 2
   no-whitespace-before-property: 2
   object-property-newline: 2
@@ -53,7 +51,7 @@ rules:
   space-unary-ops: 2
   spaced-comment: 2
   arrow-body-style: 2
-  arrow-parens: 2
+  arrow-parens: [2, "as-needed"]
   arrow-spacing: 2
   constructor-super: 2
   generator-star-spacing: 2
@@ -121,7 +119,6 @@ rules:
   #eslint-plugin-flowtype
   flowtype/boolean-style: [2, boolean]
   flowtype/define-flow-type: 2
-  flowtype/no-weak-types: [2, { Function: true, Object: true, any: true }]
   flowtype/require-valid-file-annotation: [2, always]
   flowtype/type-id-match: [2, "^([A-Z][a-z0-9]*)+Type$"]
 

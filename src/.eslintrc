@@ -1,0 +1,6 @@
+---
+extends: "../.eslintrc"
+
+rules:
+  #eslint-plugin-flowtype
+  flowtype/no-weak-types: [2, { Function: true, Object: true, any: true }]

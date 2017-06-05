@@ -1,1 +1,8 @@
-{}
+{
+  "testMatch": [
+    "**/test/specs/**/*.spec.js"
+  ],
+  "transform": {
+    "^.+\\.jsx?$": "babel-jest"
+  }
+}
