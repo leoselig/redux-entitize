@@ -1,0 +1,10 @@
+/flow-typed
+/src
+/test
+/.babelrc
+/.flowconfig
+/.eslintrc
+/.eslintignore
+/.gitignore
+/.travis.yml
+/jest.config.json

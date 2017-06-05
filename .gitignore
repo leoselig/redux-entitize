@@ -1,5 +1,6 @@
 # Node.js/npm/yarn
 /node_modules
+/yarn-error.log
 
 # Build output
 /lib
