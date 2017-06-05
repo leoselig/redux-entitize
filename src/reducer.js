@@ -37,7 +37,7 @@ export default function createEntitiesReducer(schemas: SchemaMapType) {
     action: UpdateEntitiesActionType | Object
   ): StateType {
     switch (action.type) {
-      case "redux-entities/UPDATE_ENTITIES":
+      case "redux-entitize/UPDATE_ENTITIES":
         return updateEntities(state, action, schemas);
       default:
         return state;
