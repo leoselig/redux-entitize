@@ -119,6 +119,7 @@ rules:
   #eslint-plugin-flowtype
   flowtype/boolean-style: [2, boolean]
   flowtype/define-flow-type: 2
+  flowtype/no-weak-types: [2, { Function: true, Object: false, any: true }]
   flowtype/require-valid-file-annotation: [2, always]
   flowtype/type-id-match: [2, "^([A-Z][a-z0-9]*)+Type$"]
 

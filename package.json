@@ -9,9 +9,12 @@
   "scripts": {
     "build": "babel src/ --out-dir lib/",
     "test-dev": "jest --config=jest.config.json --notify --watch",
-    "lint-fix": "yarn run eslint . -- --fix",
+    "test-ci": "jest --config=jest.config.json",
+    "lint": "yarn run eslint .",
+    "lint-fix": "yarn run lint -- --fix",
     "flow": "flow",
-    "flow-typed": "flow-typed"
+    "flow-typed": "flow-typed",
+    "ci-pipeline": "yarn run test-ci && yarn run lint && yarn run flow"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

@@ -4,8 +4,9 @@ import {
   createStore,
   applyMiddleware,
   combineReducers,
-  type Reducer,
-  type Store
+  // See https://github.com/benmosher/eslint-plugin-import/issues/708
+  type Reducer, // eslint-disable-line import/named
+  type Store // eslint-disable-line import/named
 } from "redux";
 
 type SpyStoreType<State: Object> = Store<State, *> & {
@@ -63,7 +64,7 @@ export function createSpyStore<State: Object>(
 
   return {
     ...store,
-    dispatch: (dispatch: any),
+    dispatch: (dispatch: any), // eslint-disable-line flowtype/no-weak-types
     getActions() {
       return actions;
     },
