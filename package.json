@@ -7,7 +7,7 @@
   "author": "Leo Selig <dev.selig@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "babel src/ --out-dir lib/",
+    "compile": "babel src/ --out-dir lib/",
     "test-dev": "jest --config=jest.config.json --notify --watch",
     "test-ci": "jest --config=jest.config.json",
     "lint": "yarn run eslint .",
@@ -15,7 +15,9 @@
     "flow": "flow",
     "flow-typed": "flow-typed",
     "ci-pipeline": "yarn run test-ci && yarn run lint && yarn run flow",
-    "prepublish": "yarn run build"
+    "prepublish": "yarn run compile",
+    "changelog": "yarn run strangelog",
+    "changelog-generate": "strangelog generate --outFile CHANGELOG.md"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -33,7 +35,8 @@
     "flow-typed": "^2.1.2",
     "jest": "^20.0.4",
     "prettier": "^1.4.2",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "strangelog": "^0.0.7"
   },
   "dependencies": {
     "deep-extend": "^0.5.0",
