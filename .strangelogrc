@@ -1,0 +1,5 @@
+path: ./changelog
+components:
+  actions: Actions
+  reducer: Reducer
+  all: All
