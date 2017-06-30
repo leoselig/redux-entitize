@@ -3,7 +3,7 @@
 import deepExtend from "deep-extend";
 import { normalize, type Schema } from "normalizr";
 
-import { type UpdateEntitiesActionType } from "./actions";
+import { type UpdateEntityActionType } from "./actions";
 
 export type SchemaMapType = {
   [schemaName: string]: Schema
@@ -38,11 +38,11 @@ function getInitialState(schemas: SchemaMapType): StateType {
 export default function createEntitiesReducer(schemas: SchemaMapType) {
   function entitiesReducer(
     state: StateType = getInitialState(schemas),
-    action: UpdateEntitiesActionType | Object
+    action: UpdateEntityActionType | Object
   ): StateType {
     switch (action.type) {
-      case "redux-entitize/UPDATE_ENTITIES":
-        return updateEntities(state, action, schemas);
+      case "redux-entitize/UPDATE_ENTITY":
+        return updateEntity(state, action, schemas);
       default:
         return state;
     }
@@ -51,9 +51,9 @@ export default function createEntitiesReducer(schemas: SchemaMapType) {
   return entitiesReducer;
 }
 
-function updateEntities(
+function updateEntity(
   state: StateType,
-  action: UpdateEntitiesActionType,
+  action: UpdateEntityActionType,
   schemas: SchemaMapType
 ): StateType {
   const { data, schema } = action.payload;

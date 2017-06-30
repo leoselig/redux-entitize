@@ -1,18 +1,18 @@
 // @flow
 
-export type UpdateEntitiesActionType = {
-  type: "redux-entitize/UPDATE_ENTITIES",
+export type UpdateEntityActionType = {
+  type: "redux-entitize/UPDATE_ENTITY",
   payload: {
     data: Object,
     schema: string
   }
 };
-export function updateEntitiesAction(
+export function updateEntityAction(
   schema: string,
   data: Object
-): UpdateEntitiesActionType {
+): UpdateEntityActionType {
   return {
-    type: "redux-entitize/UPDATE_ENTITIES",
+    type: "redux-entitize/UPDATE_ENTITY",
     payload: {
       schema,
       data

@@ -3,7 +3,7 @@
 import { schema } from "normalizr";
 
 import createEntitiesReducer from "../../src/reducer";
-import { updateEntitiesAction } from "../../src/actions";
+import { updateEntityAction } from "../../src/actions";
 import { createSpyStore } from "../utils";
 
 describe("reducer", () => {
@@ -22,12 +22,12 @@ describe("reducer", () => {
         }
       );
     }
-    describe("when receiving UPDATE_ENTITIES action with new entity", () => {
+    describe("when receiving UPDATE_ENTITY action with new entity", () => {
       test("puts entity into state", () => {
         const store = setupSingleEntityStore();
 
         store.dispatch(
-          updateEntitiesAction("articles", {
+          updateEntityAction("articles", {
             id: "article_1",
             title: "Foo Bar"
           })
@@ -45,7 +45,7 @@ describe("reducer", () => {
         });
       });
     });
-    describe("when receiving UPDATE_ENTITIES action with known entity", () => {
+    describe("when receiving UPDATE_ENTITY action with known entity", () => {
       test("merges old and new entity", () => {
         const store = setupSingleEntityStore({
           articles: {
@@ -57,7 +57,7 @@ describe("reducer", () => {
         });
 
         store.dispatch(
-          updateEntitiesAction("articles", {
+          updateEntityAction("articles", {
             id: "article_1",
             bar: "changed",
             baz: "is new"
@@ -79,13 +79,13 @@ describe("reducer", () => {
       });
     });
 
-    describe("when receiving UPDATE_ENTITIES action without id", () => {
+    describe("when receiving UPDATE_ENTITY action without id", () => {
       test("throws an error", () => {
         const store = setupSingleEntityStore();
 
         expect(() => {
           store.dispatch(
-            updateEntitiesAction("articles", {
+            updateEntityAction("articles", {
               title: "ID missing"
             })
           );
@@ -111,12 +111,12 @@ describe("reducer", () => {
         }
       );
     }
-    describe("when receiving UPDATE_ENTITIES action with new entity", () => {
+    describe("when receiving UPDATE_ENTITY action with new entity", () => {
       test("puts entity and nested entity into each state", () => {
         const store = setupNestedEntityStore();
 
         store.dispatch(
-          updateEntitiesAction("articles", {
+          updateEntityAction("articles", {
             id: "article_1",
             title: "Foo Bar",
             author: {
@@ -145,7 +145,7 @@ describe("reducer", () => {
         });
       });
     });
-    describe("when receiving UPDATE_ENTITIES action with known entity", () => {
+    describe("when receiving UPDATE_ENTITY action with known entity", () => {
       test("merges old and new entity", () => {
         const store = setupNestedEntityStore({
           articles: {
@@ -165,7 +165,7 @@ describe("reducer", () => {
         });
 
         store.dispatch(
-          updateEntitiesAction("articles", {
+          updateEntityAction("articles", {
             id: "article_1",
             bar: "changed",
             baz: "is new",
@@ -219,12 +219,12 @@ describe("reducer", () => {
         }
       );
     }
-    describe("when receiving UPDATE_ENTITIES action with new entity", () => {
+    describe("when receiving UPDATE_ENTITY action with new entity", () => {
       test("puts entity and nested entity into each state", () => {
         const store = setupArrayEntityStore();
 
         store.dispatch(
-          updateEntitiesAction("articles", {
+          updateEntityAction("articles", {
             id: "article_1",
             title: "Foo Bar",
             comments: [
@@ -263,7 +263,7 @@ describe("reducer", () => {
         });
       });
     });
-    describe("when receiving UPDATE_ENTITIES action with known entity", () => {
+    describe("when receiving UPDATE_ENTITY action with known entity", () => {
       test("merges old and new entity", () => {
         const store = setupArrayEntityStore({
           articles: {
@@ -283,7 +283,7 @@ describe("reducer", () => {
         });
 
         store.dispatch(
-          updateEntitiesAction("articles", {
+          updateEntityAction("articles", {
             id: "article_1",
             bar: "changed",
             baz: "is new",
