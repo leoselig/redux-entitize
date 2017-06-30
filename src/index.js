@@ -1,13 +1,13 @@
 // @flow
 
 import createEntitiesReducer, { type StateType } from "./reducer";
-import { updateEntitiesAction, type UpdateEntitiesActionType } from "./actions";
+import { updateEntityAction, type UpdateEntityActionType } from "./actions";
 import { selectEntity, selectEntities } from "./selectors";
 
 export {
   createEntitiesReducer,
-  updateEntitiesAction,
+  updateEntityAction,
   selectEntity,
   selectEntities
 };
-export type { StateType, UpdateEntitiesActionType };
+export type { StateType, UpdateEntityActionType };
