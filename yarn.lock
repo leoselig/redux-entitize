@@ -3395,9 +3395,9 @@ sshpk@^1.7.0:
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
 
-strangelog@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/strangelog/-/strangelog-0.0.7.tgz#034b78d66eae1a7078116371341fb50f4c29fbdf"
+strangelog@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/strangelog/-/strangelog-1.0.0.tgz#b198d06d696dcd2a51fbcabf218e21c6355328aa"
   dependencies:
     fs-extra "^3.0.1"
     handlebars "^4.0.10"
