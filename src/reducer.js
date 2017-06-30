@@ -9,10 +9,14 @@ export type SchemaMapType = {
   [schemaName: string]: Schema
 };
 
+export type EntityType = Object;
+
+export type SchemaEntitiesMapType = {
+  [id: string]: EntityType
+};
+
 export type StateType = {
-  [schema: string]: {
-    [id: string]: Object
-  }
+  [schema: string]: SchemaEntitiesMapType
 };
 
 function getInitialState(schemas: SchemaMapType): StateType {

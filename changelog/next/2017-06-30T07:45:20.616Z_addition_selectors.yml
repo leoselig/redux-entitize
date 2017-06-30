@@ -1,0 +1,6 @@
+dateTime: '2017-06-30T07:45:20.616Z'
+component: selectors
+kind: addition
+description: >-
+  Now exposing two selectors `selectEntity(schema: string, id: string)` and
+  `selectEntities(schema: string, ids?: string[])`
