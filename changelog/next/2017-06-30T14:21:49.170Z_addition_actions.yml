@@ -1,0 +1,6 @@
+dateTime: '2017-06-30T14:21:49.170Z'
+component: actions
+kind: addition
+description: >-
+  Re-adds a "real" `updateEntitiesAction()` to update an array of entities of
+  the same schema
