@@ -2,4 +2,5 @@ path: ./changelog
 components:
   actions: Actions
   reducer: Reducer
+  selectors: Selectors
   all: All
