@@ -9,7 +9,7 @@ _No entries_
 _No entries_
 
 ### Fixed
-_No entries_
+- **Actions:** Missing export of &#x60;updateEntitiesAction&#x60;
 
 ## Version `0.2.0`
 

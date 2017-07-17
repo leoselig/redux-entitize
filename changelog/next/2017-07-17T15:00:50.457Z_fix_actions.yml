@@ -1,0 +1,4 @@
+dateTime: '2017-07-17T15:00:50.457Z'
+component: actions
+kind: fix
+description: Missing export of `updateEntitiesAction`
