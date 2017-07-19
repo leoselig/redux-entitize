@@ -1,14 +1,16 @@
 // @flow
 
+import omit from "lodash/omit";
 import deepExtend from "deep-extend";
 import { normalize } from "normalizr";
 
 import type { EntityType, SchemaMapType } from "./types";
 import {
   type UpdateEntityActionType,
-  type UpdateEntitiesActionType
+  type UpdateEntitiesActionType,
+  type DeleteEntityActionType
 } from "./actions";
-import { UPDATE_ENTITY, UPDATE_ENTITIES } from "./actionTypes";
+import { UPDATE_ENTITY, UPDATE_ENTITIES, DELETE_ENTITY } from "./actionTypes";
 
 export type SchemaEntitiesMapType = {
   [id: string]: EntityType
@@ -44,6 +46,8 @@ export default function createEntitiesReducer(schemas: SchemaMapType) {
         return handleUpdateEntity(state, action, schemas);
       case UPDATE_ENTITIES:
         return handleUpdateEntities(state, action, schemas);
+      case DELETE_ENTITY:
+        return handleDeleteEntity(state, action);
       default:
         return state;
     }
@@ -65,6 +69,18 @@ function updateEntity(
   const { entities } = normalize(data, schemas[schema]);
 
   return deepExtend({}, state, entities);
+}
+
+function handleDeleteEntity(
+  state: StateType,
+  action: DeleteEntityActionType
+): StateType {
+  const { schema, id } = action.payload;
+
+  return {
+    ...state,
+    [schema]: omit(state[schema], id)
+  };
 }
 
 function handleUpdateEntity(

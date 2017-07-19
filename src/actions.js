@@ -1,6 +1,6 @@
 // @flow
 
-import { UPDATE_ENTITY, UPDATE_ENTITIES } from "./actionTypes";
+import { UPDATE_ENTITY, UPDATE_ENTITIES, DELETE_ENTITY } from "./actionTypes";
 
 export type UpdateEntityActionType = {
   type: "redux-entitize/UPDATE_ENTITY",
@@ -38,6 +38,26 @@ export function updateEntitiesAction(
     payload: {
       schema,
       data
+    }
+  };
+}
+
+export type DeleteEntityActionType = {
+  type: "redux-entitize/DELETE_ENTITY",
+  payload: {
+    id: string,
+    schema: string
+  }
+};
+export function deleteEntityAction(
+  schema: string,
+  id: string
+): DeleteEntityActionType {
+  return {
+    type: DELETE_ENTITY,
+    payload: {
+      schema,
+      id
     }
   };
 }

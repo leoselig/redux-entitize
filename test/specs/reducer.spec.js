@@ -3,7 +3,11 @@
 import { schema } from "normalizr";
 
 import createEntitiesReducer from "../../src/reducer";
-import { updateEntityAction, updateEntitiesAction } from "../../src/actions";
+import {
+  updateEntityAction,
+  updateEntitiesAction,
+  deleteEntityAction
+} from "../../src/actions";
 import { createSpyStore } from "../utils";
 
 describe("reducer", () => {
@@ -22,6 +26,27 @@ describe("reducer", () => {
         }
       );
     }
+    describe("when receiving DELETE_ENTITY action", () => {
+      describe("with known entity", () => {
+        test("removes entity from state", () => {
+          const store = setupSingleEntityStore({
+            articles: {
+              article_1: {}
+            }
+          });
+
+          expect(Object.keys(store.getState().entities.articles)).toContain(
+            "article_1"
+          );
+
+          store.dispatch(deleteEntityAction("articles", "article_1"));
+
+          expect(Object.keys(store.getState().entities.articles)).not.toContain(
+            "article_1"
+          );
+        });
+      });
+    });
     describe("when receiving UPDATE_ENTITY action", () => {
       describe("with new entity", () => {
         test("puts entity into state", () => {

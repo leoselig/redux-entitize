@@ -1,0 +1,6 @@
+dateTime: '2017-07-19T11:02:48.075Z'
+component: all
+kind: addition
+description: >-
+  Support hard deletion of entities through new `deleteEntityAction(schema:
+  string, id: string)`

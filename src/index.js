@@ -4,7 +4,10 @@ import createEntitiesReducer, { type StateType } from "./reducer";
 import {
   updateEntityAction,
   updateEntitiesAction,
-  type UpdateEntityActionType
+  deleteEntityAction,
+  type UpdateEntityActionType,
+  type UpdateEntitiesActionType,
+  type DeleteEntityActionType
 } from "./actions";
 import createSelectors from "./createSelectors";
 
@@ -12,6 +15,12 @@ export {
   createEntitiesReducer,
   updateEntityAction,
   updateEntitiesAction,
+  deleteEntityAction,
   createSelectors
 };
-export type { StateType, UpdateEntityActionType };
+export type {
+  StateType,
+  UpdateEntityActionType,
+  UpdateEntitiesActionType,
+  DeleteEntityActionType
+};
