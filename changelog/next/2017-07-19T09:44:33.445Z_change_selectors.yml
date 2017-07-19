@@ -1,0 +1,6 @@
+dateTime: '2017-07-19T09:44:33.445Z'
+component: selectors
+kind: change
+description: >-
+  Selectors are now longer exported but need to be created via
+  `createSelector(schemaMap)` which will apply denormalization by default

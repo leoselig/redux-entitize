@@ -1,19 +1,14 @@
 // @flow
 
 import deepExtend from "deep-extend";
-import { normalize, type Schema } from "normalizr";
+import { normalize } from "normalizr";
 
+import type { EntityType, SchemaMapType } from "./types";
 import {
   type UpdateEntityActionType,
   type UpdateEntitiesActionType
 } from "./actions";
 import { UPDATE_ENTITY, UPDATE_ENTITIES } from "./actionTypes";
-
-export type SchemaMapType = {
-  [schemaName: string]: Schema
-};
-
-export type EntityType = Object;
 
 export type SchemaEntitiesMapType = {
   [id: string]: EntityType

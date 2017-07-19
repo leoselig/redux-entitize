@@ -6,13 +6,12 @@ import {
   updateEntitiesAction,
   type UpdateEntityActionType
 } from "./actions";
-import { selectEntity, selectEntities } from "./selectors";
+import createSelectors from "./createSelectors";
 
 export {
   createEntitiesReducer,
   updateEntityAction,
   updateEntitiesAction,
-  selectEntity,
-  selectEntities
+  createSelectors
 };
 export type { StateType, UpdateEntityActionType };

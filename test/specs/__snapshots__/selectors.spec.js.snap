@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`selectors when initialized with an array entity schema selectEntities when called with only the schema returns array of all entities' data with nested entities 1`] = `
+Array [
+  Object {
+    "comments": Array [
+      Object {
+        "id": "comment_1",
+        "title": "Good",
+      },
+      Object {
+        "id": "comment_2",
+        "title": "Bad",
+      },
+    ],
+    "id": "article_1",
+    "title": "Foo Bar 1",
+  },
+  Object {
+    "comments": Array [],
+    "id": "article_2",
+    "title": "Foo Bar 2",
+  },
+  Object {
+    "comments": Array [],
+    "id": "article_3",
+    "title": "Foo Bar 3",
+  },
+]
+`;
+
+exports[`selectors when initialized with an array entity schema selectEntities when called with the schema and an array of IDs returns array of selected and nested entities' data 1`] = `
+Array [
+  Object {
+    "comments": Array [],
+    "id": "article_2",
+    "title": "Foo Bar 2",
+  },
+  Object {
+    "comments": Array [],
+    "id": "article_3",
+    "title": "Foo Bar 3",
+  },
+]
+`;
+
+exports[`selectors when initialized with an array entity schema selectEntity when called with existent id returns the entity data with nested entities 1`] = `
+Object {
+  "comments": Array [
+    Object {
+      "id": "comment_1",
+      "title": "Good",
+    },
+    Object {
+      "id": "comment_2",
+      "title": "Bad",
+    },
+  ],
+  "id": "article_1",
+  "title": "Foo Bar 1",
+}
+`;
+
+exports[`selectors when initialized with an array entity schema selectEntity when called with non-existent schema throws an error 1`] = `"Schema 'unkownSchema' is unkown. Schemas in state are: [articles, comments]"`;
