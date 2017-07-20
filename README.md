@@ -28,11 +28,9 @@ yarn add redux-entitize
 Here is how you set up a reducer according to your `normalizr` schemas.
 
 ```javascript
-// main.js
+// schemas.js
 
-import { combineReducers } from 'redux';
 import { normalize, schema } from 'normalizr';
-import { createEntitiesReducer } from 'redux-entitize';
 
 const userSchema = new schema.Entity('users');
 const commentSchema = new schema.Entity('comments', {
@@ -43,11 +41,14 @@ export const schemas = {
   "users": userSchema,
   "comments": commentSchema,
 };
+```
 
 ```javascript
 // reducers.js
 
-import { schemas } from 'main.js';
+import { createEntitiesReducer } from 'redux-entitize';
+import { combineReducers } from 'redux';
+import { schemas } from 'schemas.js';
 
 const entitiesReducer = createEntitiesReducer(schemas);
 
@@ -107,7 +108,7 @@ store.dispatch(
 import { createSelectors } from 'redux-entitize';
 
 // Assuming we have that `schemas` variable from above when you created your schemas
-import { schemas } from 'main.js'
+import { schemas } from 'schemas.js'
 
 export const {
   selectEntity,
