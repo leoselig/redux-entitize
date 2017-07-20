@@ -90,8 +90,7 @@ dispatch(
 );
 ```
 
-Then finally, to use the entities in your components, `redux-entitize` provides selectors.
-
+`redux-entitize` provides selectors to access entities from the state.
 
 ```javascript
 // selectors.js
@@ -107,11 +106,17 @@ export const {
 } = createSelectors(schemas)
 ```
 
+Import the selectors in your components and render data as you like.
+
 ```javascript
 // UserList.js
 
 import React from 'react';
 import { connect } from 'react-redux';
+import {
+  selectEntity,
+  selectEntities
+} from 'selectors.js';
 
 function UserList(props) {
   return (
