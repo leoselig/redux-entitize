@@ -44,9 +44,14 @@ export const schemas = {
   "comments": commentSchema,
 };
 
+```javascript
+// reducers.js
+
+import { schemas } from 'main.js';
+
 const entitiesReducer = createEntitiesReducer(schemas);
 
-const reducers = combineReducers({
+export const reducers = combineReducers({
   someReducer: (state, action) => 42,
   entitiesReducer
 });
@@ -59,13 +64,17 @@ const reducers = combineReducers({
 ```javascript
 // actions.js
 
-import { dispatch } from 'redux';
+import { createStore } from 'redux';
 import {
   updateEntityAction,
   updateEntitiesAction,
 } from 'redux-entitize';
 
-dispatch(
+import { reducers } from 'reducers.js';
+
+const store = createStore(reducers);
+
+store.dispatch(
   updateEntityAction('users', {
     id: "1234",
     email: "test.user@example.com",
@@ -73,7 +82,7 @@ dispatch(
   })
 );
 
-dispatch(
+store.dispatch(
   updateEntitiesAction('comments', [{
     id: "567",
     message: "Hello world.",
@@ -85,7 +94,7 @@ dispatch(
   }])
 );
 
-dispatch(
+store.dispatch(
   deleteEntityAction('comments', "567");
 );
 ```
