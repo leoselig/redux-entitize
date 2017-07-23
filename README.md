@@ -2,11 +2,11 @@
 
 Automated [redux](https://github.com/reactjs/redux)-state management for all your entities.
 
-`redux-entitize` maintains normalized entities in the state and provides:
+`redux-entitize` helps you organize all your entities in unified and normalized state. It ships with:
 
-- an entities reducer
-- entity update / delete action creators
-- entity selectors
+- a reducer
+- a set of action creators to populate your state with entity data
+- a set of selectors to retrieve entities from the state
 
 ## Getting started
 
@@ -24,11 +24,12 @@ yarn add redux-entitize
 
 ### Usage Example
 
-`redux-entitize` provides a creator function for a single entities reducer handles the update and delete operations on your entities.
+`redux-entitize` provides a factory function to create a reducer that handles the update and delete operations on your entities. The factory is needed because the reducer needs to know your normalizr-schemas in order to normalize your entities before putting them into the state.
+
 Here is how you set up a reducer according to your `normalizr` schemas.
 
 ```javascript
-// schemas.js
+// schemaMap.js
 
 import { normalize, schema } from 'normalizr';
 
@@ -37,9 +38,9 @@ const commentSchema = new schema.Entity('comments', {
   commenter: userSchema
 });
 
-export const schemas = {
-  "users": userSchema,
-  "comments": commentSchema,
+export const schemaMap = {
+  users: userSchema,
+  comments: commentSchema,
 };
 ```
 
@@ -48,30 +49,31 @@ export const schemas = {
 
 import { createEntitiesReducer } from 'redux-entitize';
 import { combineReducers } from 'redux';
-import { schemas } from 'schemas.js';
+import { schemaMap } from './schemasMap';
 
 const entitiesReducer = createEntitiesReducer(schemas);
 
 export const reducers = combineReducers({
   someReducer: (state, action) => 42,
-  entitiesReducer
+  entities: entitiesReducer // State slice is required to be called "entities" (for selectors)
 });
 ```
 
-`redux-entitize` maintains your normalized entities in the state and provides action creators to:
-1) Update entities (inserts new entities, overrides existing entities)
-2) Delete entities
+To add new entities or update existing ones, use `updateEntityAction` / `updateEntitiesAction`.
+
+To hard-delete an entity, use `deleteEntityAction`.
 
 ```javascript
-// actions.js
+// main.js
 
 import { createStore } from 'redux';
 import {
   updateEntityAction,
   updateEntitiesAction,
+  deleteEntityAction,
 } from 'redux-entitize';
 
-import { reducers } from 'reducers.js';
+import { reducers } from './reducers';
 
 const store = createStore(reducers);
 
@@ -108,7 +110,7 @@ store.dispatch(
 import { createSelectors } from 'redux-entitize';
 
 // Assuming we have that `schemas` variable from above when you created your schemas
-import { schemas } from 'schemas.js'
+import { schemaMap } from './schemaMap'
 
 export const {
   selectEntity,
@@ -126,7 +128,7 @@ import { connect } from 'react-redux';
 import {
   selectEntity,
   selectEntities
-} from 'selectors.js';
+} from './selectors';
 
 function UserList(props) {
   return (
@@ -144,7 +146,7 @@ function mapStateToProps(state) {
   return {
     // Get all entities
     users: selectEntities(state, 'users'),
-    // Or even select particular entities by id:
+    // or even select particular entities by id:
     specialUsers: selectEntities(state, 'users', ["123", "124", "721"]),
     particularComment: selectEntity(state, 'comments', "890"])
   };
