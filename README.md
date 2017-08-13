@@ -106,7 +106,10 @@ store.dispatch(
 
 ### Select entities from state
 
-`redux-entitize` provides a selectors factory to simplify selecting entities from the state. It will **de-normalize** the entities for you automatically, so you will have to provide the `schemaMap` once again.
+`redux-entitize` provides a selectors factory to simplify selecting entities from the state. It's strongly recommended to use these, because
+- selected entities will be automatically **de-normalized**
+- selectors are based on [reselect](https://github.com/reactjs/reselect), so they are memoized (otherwise you application will most likely be slow)
+- selectors are meant to remain stable throughout changes of the internal `entities`-state
 
 ```javascript
 // selectors.js
@@ -116,10 +119,7 @@ import { createSelectors } from 'redux-entitize';
 // Assuming we have that `schemas` variable from above when you created your schemas
 import { schemaMap } from './schemaMap'
 
-export const {
-  selectEntity,
-  selectEntities
-} = createSelectors(schemas)
+export const selectors = createSelectors(schemas)
 ```
 
 Import the selectors in your components and render data as you like.
@@ -136,14 +136,14 @@ import {
   selectEntities
 } from './selectors';
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
   return {
     // Get all entities of a type
-    allUsers: selectEntities(state, 'users'),
+    allUsers: schemaSelectors.selectEntities(state, 'users'),
     // Get all entities of a type with certain IDs
-    filteredUsers: selectEntities(state, 'users', ["id1", "id2", "id3"]),
+    filteredUsers: schemaSelectors.selectEntities(state, 'users', state.userList.filteredIds),
     // Get a single entity of a type with a certain ID
-    loggedInUser: selectEntity(state, 'users', 'id123')
+    loggedInUser: schemaSelectors.selectEntity(state, 'users', props)
   };
 }
 

@@ -2,67 +2,135 @@
 
 import { denormalize } from "normalizr";
 
-import { type StateType, type SchemaEntitiesMapType } from "./reducer";
-import type { EntityType, SchemaMapType } from "./types";
+import createHashedSelector from "./createHashedSelector";
+import type {
+  EntityType,
+  SchemaMapType,
+  StateWithEntitiesType,
+  PropsWithIdType,
+  PropsWithIdsType,
+  SelectorsType
+} from "./types";
 
-export default function createSelectors(schemaMap: SchemaMapType) {
-  function selectEntity(
-    state: { entities: StateType },
-    schema: string,
-    id: string
-  ): ?EntityType {
-    ensureExistingSchema(state, schema);
+function selectEntitiesState({ entities }: StateWithEntitiesType) {
+  return entities;
+}
 
-    return (
-      denormalize(
-        { [schema]: [id] },
-        { [schema]: [schemaMap[schema]] },
-        state.entities
-      )[schema][0] || null
-    );
-  }
+function selectIdFromProps(
+  state: StateWithEntitiesType,
+  { id }: PropsWithIdType
+) {
+  return id;
+}
 
-  function selectEntities(
-    state: { entities: StateType },
-    schema: string,
-    ids?: string[]
-  ): EntityType[] {
-    const schemaEntities = selectSchemaEntitiesMap(state, schema);
-    const relevantIDs = ids || Object.keys(schemaEntities);
+function selectIdsFromProps(
+  state: StateWithEntitiesType,
+  { ids }: PropsWithIdsType
+) {
+  return ids;
+}
 
-    return denormalize(
-      { [schema]: relevantIDs },
-      { [schema]: [schemaMap[schema]] },
-      state.entities
-    )[schema];
-  }
-
-  function selectSchemaEntitiesMap(
-    state: { entities: StateType },
-    schema: string
-  ): SchemaEntitiesMapType {
-    const schemaEntities = state.entities[schema];
-
-    ensureExistingSchema(state, schema);
-
-    return schemaEntities;
-  }
-
-  function ensureExistingSchema(
-    state: { entities: StateType },
-    schema: string
-  ) {
-    if (!state.entities[schema]) {
+export default function createSelectors<SchemasType: string>(
+  schemaMap: SchemaMapType<SchemasType>
+): SelectorsType<SchemasType> {
+  function ensureExistentSchema(schema: string) {
+    if (!schemaMap.hasOwnProperty(schema)) {
       throw new Error(
-        `Schema '${schema}' is unkown. Schemas in state are: [${Object.keys(
-          state.entities
+        `Received unknown schema '${schema}'. Known schemas are [${Object.keys(
+          schemaMap
         ).join(", ")}]`
       );
     }
   }
 
+  const schemaSelectors = Object.keys(
+    schemaMap
+  ).reduce((previousSelectors, schemaName) => {
+    const selectEntities = createHashedSelector(
+      [selectEntitiesState],
+      entities => entities[schemaName]
+    );
+    const selectAllIds = createHashedSelector([selectEntities], entities =>
+      Object.keys(entities)
+    );
+
+    return {
+      ...previousSelectors,
+      [schemaName]: {
+        selectEntities,
+        selectIdFromProps,
+        selectIdsFromProps,
+        selectAllIds
+      }
+    };
+  }, {});
+
+  function createSelectSingle(schema: SchemasType): ?EntityType {
+    return createHashedSelector(
+      [selectEntitiesState, schemaSelectors[schema].selectIdFromProps],
+      (entitiesState, id) =>
+        denormalize(
+          { [schema]: [id] },
+          { [schema]: [schemaMap[schema]] },
+          entitiesState
+        )[schema][0] || null
+    );
+  }
+
+  function createSelectSome(schema: SchemasType) {
+    return createHashedSelector(
+      [selectEntitiesState, schemaSelectors[schema].selectIdsFromProps],
+      (entitiesState, ids) =>
+        denormalize(
+          { [schema]: ids },
+          { [schema]: [schemaMap[schema]] },
+          entitiesState
+        )[schema]
+    );
+  }
+
+  function createSelectAll(schema: SchemasType) {
+    return createHashedSelector(
+      [selectEntitiesState, schemaSelectors[schema].selectAllIds],
+      (entitiesState, allIds) =>
+        denormalize(
+          { [schema]: allIds },
+          { [schema]: [schemaMap[schema]] },
+          entitiesState
+        )[schema]
+    );
+  }
+
+  function createSchemaSelectorSet(schema: SchemasType) {
+    return {
+      selectSingle: createSelectSingle(schema),
+      selectSome: createSelectSome(schema),
+      selectAll: createSelectAll(schema)
+    };
+  }
+
+  const entitySelectorsPerSchema = Object.keys(schemaMap).reduce(
+    (schemaSelectorSets, schemaName: SchemasType) => ({
+      ...schemaSelectorSets,
+      [schemaName]: createSchemaSelectorSet(schemaName)
+    }),
+    {}
+  );
+
   return {
-    selectEntity,
-    selectEntities
+    selectEntity(state, schema, id) {
+      ensureExistentSchema(schema);
+
+      return entitySelectorsPerSchema[schema].selectSingle(state, { id });
+    },
+    selectEntities(state, schema, ids) {
+      ensureExistentSchema(schema);
+
+      if (ids) {
+        return entitySelectorsPerSchema[schema].selectSome(state, { ids });
+      }
+
+      return entitySelectorsPerSchema[schema].selectAll(state);
+    }
   };
 }
