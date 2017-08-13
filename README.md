@@ -8,25 +8,19 @@ Automated [redux](https://github.com/reactjs/redux)-state management for all you
 - a set of action creators to populate your state with entity data
 - a set of selectors to retrieve entities from the state
 
-## Getting started
-
-### Install
-
-```bash
-npm install --save redux-entitize
-```
-
-or
+## Install
 
 ```bash
 yarn add redux-entitize
+# or
+npm install --save redux-entitize
 ```
 
-### Usage Example
+## Getting Started
 
-`redux-entitize` provides a factory function to create a reducer that handles the update and delete operations on your entities. The factory is needed because the reducer needs to know your normalizr-schemas in order to normalize your entities before putting them into the state.
+### 1. Define your schemas
 
-Here is how you set up a reducer according to your `normalizr` schemas.
+You need to tell redux-entitize about all your [normalizr](https://github.com/paularmstrong/normalizr)-schemas by defining a **`schemaMap`**:
 
 ```javascript
 // schemaMap.js
@@ -44,6 +38,8 @@ export const schemaMap = {
 };
 ```
 
+### 2. Add the `entities`-reducer
+
 ```javascript
 // reducers.js
 
@@ -54,14 +50,18 @@ import { schemaMap } from './schemasMap';
 const entitiesReducer = createEntitiesReducer(schemas);
 
 export const reducers = combineReducers({
-  someReducer: (state, action) => 42,
-  entities: entitiesReducer // State slice is required to be called "entities" (for selectors)
+  entities: entitiesReducer // must be called entities
+  // ... your other reducers
 });
 ```
 
+**Note:** In order for the [selectors](#selectors) to Just Work™, the state slice must be called `entities`.
+
+### Dispatch update actions
+
 To add new entities or update existing ones, use `updateEntityAction` / `updateEntitiesAction`.
 
-To hard-delete an entity, use `deleteEntityAction`.
+To remove an entity from your state, use `deleteEntityAction`.
 
 ```javascript
 // main.js
@@ -102,7 +102,11 @@ store.dispatch(
 );
 ```
 
-`redux-entitize` provides selectors to access entities from the state.
+**Note:** Where these actions are actually dispatched is dependent on how your app is interacting with the API.
+
+### Select entities from state
+
+`redux-entitize` provides a selectors factory to simplify selecting entities from the state. It will **de-normalize** the entities for you automatically, so you will have to provide the `schemaMap` once again.
 
 ```javascript
 // selectors.js
@@ -114,7 +118,7 @@ import { schemaMap } from './schemaMap'
 
 export const {
   selectEntity,
-  selectEntities,
+  selectEntities
 } = createSelectors(schemas)
 ```
 
@@ -125,35 +129,23 @@ Import the selectors in your components and render data as you like.
 
 import React from 'react';
 import { connect } from 'react-redux';
+
+import UserList './UserList';
 import {
   selectEntity,
   selectEntities
 } from './selectors';
 
-function UserList(props) {
-  return (
-    <div>
-      {
-        props.users.map(user => {
-          <p>user.email</p>
-        })
-      }
-    </div>
-  );
-}
-
 function mapStateToProps(state) {
   return {
-    // Get all entities
-    users: selectEntities(state, 'users'),
-    // or even select particular entities by id:
-    specialUsers: selectEntities(state, 'users', ["123", "124", "721"]),
-    particularComment: selectEntity(state, 'comments', "890"])
+    // Get all entities of a type
+    allUsers: selectEntities(state, 'users'),
+    // Get all entities of a type with certain IDs
+    filteredUsers: selectEntities(state, 'users', ["id1", "id2", "id3"]),
+    // Get a single entity of a type with a certain ID
+    loggedInUser: selectEntity(state, 'users', 'id123')
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UserList);
+export default connect(mapStateToProps)(UserList);
 ```
