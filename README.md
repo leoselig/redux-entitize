@@ -136,14 +136,18 @@ import {
   selectEntities
 } from './selectors';
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
   return {
     // Get all entities of a type
     allUsers: schemaSelectors.selectEntities(state, 'users'),
+
     // Get all entities of a type with certain IDs
+    // (state.userList.filteredIds === ['id1', 'id2', 'id3'])
     filteredUsers: schemaSelectors.selectEntities(state, 'users', state.userList.filteredIds),
+
     // Get a single entity of a type with a certain ID
-    loggedInUser: schemaSelectors.selectEntity(state, 'users', props)
+    // (state.login.userId === 'id123')
+    loggedInUser: schemaSelectors.selectEntity(state, 'users', state.login.userId)
   };
 }
 
