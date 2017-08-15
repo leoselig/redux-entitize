@@ -8,25 +8,19 @@ Automated [redux](https://github.com/reactjs/redux)-state management for all you
 - a set of action creators to populate your state with entity data
 - a set of selectors to retrieve entities from the state
 
-## Getting started
-
-### Install
-
-```bash
-npm install --save redux-entitize
-```
-
-or
+## Install
 
 ```bash
 yarn add redux-entitize
+# or
+npm install --save redux-entitize
 ```
 
-### Usage Example
+## Getting Started
 
-`redux-entitize` provides a factory function to create a reducer that handles the update and delete operations on your entities. The factory is needed because the reducer needs to know your normalizr-schemas in order to normalize your entities before putting them into the state.
+### 1. Define your schemas
 
-Here is how you set up a reducer according to your `normalizr` schemas.
+You need to tell redux-entitize about all your [normalizr](https://github.com/paularmstrong/normalizr)-schemas by defining a **`schemaMap`**:
 
 ```javascript
 // schemaMap.js
@@ -44,6 +38,8 @@ export const schemaMap = {
 };
 ```
 
+### 2. Add the `entities`-reducer
+
 ```javascript
 // reducers.js
 
@@ -54,14 +50,18 @@ import { schemaMap } from './schemasMap';
 const entitiesReducer = createEntitiesReducer(schemas);
 
 export const reducers = combineReducers({
-  someReducer: (state, action) => 42,
-  entities: entitiesReducer // State slice is required to be called "entities" (for selectors)
+  entities: entitiesReducer // must be called entities
+  // ... your other reducers
 });
 ```
 
+**Note:** In order for the [selectors](#selectors) to Just Work™, the state slice must be called `entities`.
+
+### Dispatch update actions
+
 To add new entities or update existing ones, use `updateEntityAction` / `updateEntitiesAction`.
 
-To hard-delete an entity, use `deleteEntityAction`.
+To remove an entity from your state, use `deleteEntityAction`.
 
 ```javascript
 // main.js
@@ -102,7 +102,14 @@ store.dispatch(
 );
 ```
 
-`redux-entitize` provides selectors to access entities from the state.
+**Note:** Where these actions are actually dispatched is dependent on how your app is interacting with the API.
+
+### Select entities from state
+
+`redux-entitize` provides a selectors factory to simplify selecting entities from the state. It's strongly recommended to use these, because
+- selected entities will be automatically **de-normalized**
+- selectors are based on [reselect](https://github.com/reactjs/reselect), so they are memoized (otherwise you application will most likely be slow)
+- selectors are meant to remain stable throughout changes of the internal `entities`-state
 
 ```javascript
 // selectors.js
@@ -112,10 +119,7 @@ import { createSelectors } from 'redux-entitize';
 // Assuming we have that `schemas` variable from above when you created your schemas
 import { schemaMap } from './schemaMap'
 
-export const {
-  selectEntity,
-  selectEntities,
-} = createSelectors(schemas)
+export const selectors = createSelectors(schemas)
 ```
 
 Import the selectors in your components and render data as you like.
@@ -125,35 +129,27 @@ Import the selectors in your components and render data as you like.
 
 import React from 'react';
 import { connect } from 'react-redux';
+
+import UserList './UserList';
 import {
   selectEntity,
   selectEntities
 } from './selectors';
 
-function UserList(props) {
-  return (
-    <div>
-      {
-        props.users.map(user => {
-          <p>user.email</p>
-        })
-      }
-    </div>
-  );
-}
-
 function mapStateToProps(state) {
   return {
-    // Get all entities
-    users: selectEntities(state, 'users'),
-    // or even select particular entities by id:
-    specialUsers: selectEntities(state, 'users', ["123", "124", "721"]),
-    particularComment: selectEntity(state, 'comments', "890"])
+    // Get all entities of a type
+    allUsers: schemaSelectors.selectEntities(state, 'users'),
+
+    // Get all entities of a type with certain IDs
+    // (state.userList.filteredIds === ['id1', 'id2', 'id3'])
+    filteredUsers: schemaSelectors.selectEntities(state, 'users', state.userList.filteredIds),
+
+    // Get a single entity of a type with a certain ID
+    // (state.login.userId === 'id123')
+    loggedInUser: schemaSelectors.selectEntity(state, 'users', state.login.userId)
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UserList);
+export default connect(mapStateToProps)(UserList);
 ```

@@ -1,0 +1,6 @@
+dateTime: '2017-08-13T12:51:30.795Z'
+component: selectors
+kind: change
+description: >-
+  All selectors are now based on
+  [reselect](https://github.com/reactjs/reselect) to heavily improve rendering performance

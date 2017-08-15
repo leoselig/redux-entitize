@@ -4,7 +4,7 @@ import omit from "lodash/omit";
 import deepExtend from "deep-extend";
 import { normalize } from "normalizr";
 
-import type { EntityType, SchemaMapType } from "./types";
+import type { SchemaMapType, StateType } from "./types";
 import {
   type UpdateEntityActionType,
   type UpdateEntitiesActionType,
@@ -12,16 +12,8 @@ import {
 } from "./actions";
 import { UPDATE_ENTITY, UPDATE_ENTITIES, DELETE_ENTITY } from "./actionTypes";
 
-export type SchemaEntitiesMapType = {
-  [id: string]: EntityType
-};
-
-export type StateType = {
-  [schema: string]: SchemaEntitiesMapType
-};
-
-function getInitialState(schemas: SchemaMapType): StateType {
-  function intializeFromSchemas(schemas: SchemaMapType) {
+function getInitialState(schemas: SchemaMapType<*>): StateType {
+  function intializeFromSchemas(schemas: SchemaMapType<*>) {
     return Object.keys(schemas)
       .map(nextSchemaName => schemas[nextSchemaName])
       .reduce(
@@ -36,7 +28,7 @@ function getInitialState(schemas: SchemaMapType): StateType {
   return intializeFromSchemas(schemas);
 }
 
-export default function createEntitiesReducer(schemas: SchemaMapType) {
+export default function createEntitiesReducer(schemas: SchemaMapType<*>) {
   function entitiesReducer(
     state: StateType = getInitialState(schemas),
     action: UpdateEntityActionType | Object
@@ -60,7 +52,7 @@ function updateEntity(
   state: StateType,
   data: Object,
   schema: string,
-  schemas: SchemaMapType
+  schemas: SchemaMapType<*>
 ): StateType {
   if (!data.id) {
     throw new Error(`No 'id'-field found in entitiy of schema '${schema}'`);
@@ -86,7 +78,7 @@ function handleDeleteEntity(
 function handleUpdateEntity(
   state: StateType,
   action: UpdateEntityActionType,
-  schemas: SchemaMapType
+  schemas: SchemaMapType<*>
 ): StateType {
   const { data, schema } = action.payload;
 
@@ -96,7 +88,7 @@ function handleUpdateEntity(
 function handleUpdateEntities(
   state: StateType,
   action: UpdateEntitiesActionType,
-  schemas: SchemaMapType
+  schemas: SchemaMapType<*>
 ): StateType {
   const { data, schema } = action.payload;
 

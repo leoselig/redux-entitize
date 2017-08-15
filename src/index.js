@@ -1,6 +1,6 @@
 // @flow
 
-import createEntitiesReducer, { type StateType } from "./reducer";
+import createEntitiesReducer from "./reducer";
 import {
   updateEntityAction,
   updateEntitiesAction,
@@ -10,6 +10,13 @@ import {
   type DeleteEntityActionType
 } from "./actions";
 import createSelectors from "./createSelectors";
+import type {
+  PropsWithIdType,
+  PropsWithIdsType,
+  StateType,
+  SelectorsType,
+  SchemaMapType
+} from "./types";
 
 export {
   createEntitiesReducer,
@@ -19,8 +26,12 @@ export {
   createSelectors
 };
 export type {
-  StateType,
   UpdateEntityActionType,
   UpdateEntitiesActionType,
-  DeleteEntityActionType
+  DeleteEntityActionType,
+  PropsWithIdType,
+  PropsWithIdsType,
+  StateType,
+  SelectorsType,
+  SchemaMapType
 };
