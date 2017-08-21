@@ -3399,9 +3399,9 @@ sshpk@^1.7.0:
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
 
-strangelog@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/strangelog/-/strangelog-1.1.5.tgz#9dce612dfeeceb4134103217ee4ea894ebbcd936"
+strangelog@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/strangelog/-/strangelog-1.2.0.tgz#ee974826e4f3ffbcacb81d402442d35c52b7c986"
   dependencies:
     babel-polyfill "^6.23.0"
     fs-extra "^3.0.1"
