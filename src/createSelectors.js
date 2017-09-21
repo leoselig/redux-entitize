@@ -109,6 +109,7 @@ export default function createSelectors<SchemasType: string>(
     };
   }
 
+  // $FlowFixMe: Object.keys() is wrongly inferred here
   const entitySelectorsPerSchema = Object.keys(schemaMap).reduce(
     (schemaSelectorSets, schemaName: SchemasType) => ({
       ...schemaSelectorSets,
