@@ -45,7 +45,7 @@ export const schemaMap = {
 
 import { createEntitiesReducer } from 'redux-entitize';
 import { combineReducers } from 'redux';
-import { schemaMap } from './schemasMap';
+import { schemaMap } from './schemaMap';
 
 const entitiesReducer = createEntitiesReducer(schemas);
 
@@ -116,10 +116,10 @@ store.dispatch(
 
 import { createSelectors } from 'redux-entitize';
 
-// Assuming we have that `schemas` variable from above when you created your schemas
+// Assuming we have that `schemaMap` variable from above when you created your schemas
 import { schemaMap } from './schemaMap'
 
-export const selectors = createSelectors(schemas)
+export const selectors = createSelectors(schemaMap)
 ```
 
 Import the selectors in your components and render data as you like.
@@ -139,15 +139,15 @@ import {
 function mapStateToProps(state) {
   return {
     // Get all entities of a type
-    allUsers: schemaSelectors.selectEntities(state, 'users'),
+    allUsers: selectEntities(state, 'users'),
 
     // Get all entities of a type with certain IDs
     // (state.userList.filteredIds === ['id1', 'id2', 'id3'])
-    filteredUsers: schemaSelectors.selectEntities(state, 'users', state.userList.filteredIds),
+    filteredUsers: selectEntities(state, 'users', state.userList.filteredIds),
 
     // Get a single entity of a type with a certain ID
     // (state.login.userId === 'id123')
-    loggedInUser: schemaSelectors.selectEntity(state, 'users', state.login.userId)
+    loggedInUser: selectEntity(state, 'users', state.login.userId)
   };
 }
 
