@@ -14,6 +14,17 @@ describe("selectors", () => {
       };
       const state = {
         entities: {
+          schemaReferences: {
+            articles: [
+              {
+                toSchema: "comments",
+                relationType: "many",
+                viaField: "comments"
+              }
+            ],
+            comments: []
+          },
+          entityReferences: {},
           schemaEntities: {
             articles: {
               article_1: {

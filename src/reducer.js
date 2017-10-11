@@ -4,7 +4,7 @@ import omit from "lodash/omit";
 import deepExtend from "deep-extend";
 import { normalize } from "normalizr";
 
-import type { SchemaMapType, StateType } from "./types";
+import type { SchemaMapType, StateType, SchemaReferencesType } from "./types";
 import {
   type UpdateEntityActionType,
   type UpdateEntitiesActionType,
@@ -25,6 +25,7 @@ function getInitialState(schemas: SchemaMapType<*>): StateType {
           }
         }),
         {
+          schemaReferences: getReferencesForSchema(schemas),
           schemaEntities: {}
         }
       );
@@ -105,4 +106,43 @@ function handleUpdateEntities(
       updateEntity(currentState, entityData, schema, schemas),
     state
   );
+}
+
+function getReferencesForSchema(schemas): SchemaReferencesType {
+  const schemaReferences = {};
+
+  Object.keys(schemas).forEach(referencingSchemaName => {
+    const referencingSchema = schemas[referencingSchemaName];
+
+    Object.keys(referencingSchema.schema).forEach(viaField => {
+      const {
+        referencedSchemaName,
+        relationType
+      } = getReferencedSchemaNameForField(referencingSchema, viaField);
+
+      if (!schemaReferences[referencingSchemaName]) {
+        schemaReferences[referencingSchemaName] = [];
+      }
+
+      schemaReferences[referencingSchemaName].push({
+        toSchema: referencedSchemaName,
+        viaField,
+        relationType
+      });
+    });
+  });
+
+  return schemaReferences;
+}
+
+function getReferencedSchemaNameForField(normalizrSchema, field: string) {
+  const normalizrFieldValue = normalizrSchema.schema[field];
+  const is1ToManyRelation = Array.isArray(normalizrFieldValue);
+
+  return {
+    relationType: is1ToManyRelation ? "many" : "one",
+    referencedSchemaName: is1ToManyRelation
+      ? normalizrSchema.schema[field][0].key
+      : normalizrSchema.schema[field].key
+  };
 }

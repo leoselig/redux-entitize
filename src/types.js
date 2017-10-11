@@ -12,10 +12,27 @@ export type SchemaEntitiesMapType = {
   [id: string]: EntityType
 };
 
+type RelationTypeType = "one" | "many";
+
+export type SchemaReferencesType = {
+  [referencingSchema: string]: {
+    toSchema: string,
+    viaField: string,
+    relationType: RelationTypeType
+  }[]
+};
+
+type ByIDMapType<D> = {
+  [id: string]: D
+};
+
+type BySchemaByIDMapType<D> = {
+  [schema: string]: ByIDMapType<D>
+};
+
 export type StateType = {
-  schemaEntities: {
-    [schema: string]: SchemaEntitiesMapType
-  }
+  schemaReferences: SchemaReferencesType,
+  schemaEntities: BySchemaByIDMapType<Object>
 };
 
 export type StateWithEntitiesType = {
