@@ -1,0 +1,6 @@
+dateTime: '2017-10-03T15:08:07.958Z'
+component: reducer
+kind: change
+description: >-
+  Schema map inside state is now nested inside a `schemaEntities`-field (this is
+  **not** considered a breaking change, since selectors still work)

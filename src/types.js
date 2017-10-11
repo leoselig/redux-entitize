@@ -13,7 +13,9 @@ export type SchemaEntitiesMapType = {
 };
 
 export type StateType = {
-  [schema: string]: SchemaEntitiesMapType
+  schemaEntities: {
+    [schema: string]: SchemaEntitiesMapType
+  }
 };
 
 export type StateWithEntitiesType = {

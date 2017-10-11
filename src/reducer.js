@@ -19,9 +19,14 @@ function getInitialState(schemas: SchemaMapType<*>): StateType {
       .reduce(
         (state, nextSchema) => ({
           ...state,
-          [nextSchema._key]: {}
+          schemaEntities: {
+            ...state.schemaEntities,
+            [nextSchema.key]: {}
+          }
         }),
-        {}
+        {
+          schemaEntities: {}
+        }
       );
   }
 
@@ -60,7 +65,7 @@ function updateEntity(
 
   const { entities } = normalize(data, schemas[schema]);
 
-  return deepExtend({}, state, entities);
+  return deepExtend({}, state, { schemaEntities: entities });
 }
 
 function handleDeleteEntity(
@@ -71,7 +76,10 @@ function handleDeleteEntity(
 
   return {
     ...state,
-    [schema]: omit(state[schema], id)
+    schemaEntities: {
+      ...state.schemaEntities,
+      [schema]: omit(state[schema], id)
+    }
   };
 }
 
