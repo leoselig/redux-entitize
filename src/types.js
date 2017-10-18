@@ -30,8 +30,20 @@ type BySchemaByIDMapType<D> = {
   [schema: string]: ByIDMapType<D>
 };
 
+export type EntityReferenceType = {
+  toSchema: string,
+  field: string,
+  relationType: RelationTypeType,
+  id: string
+};
+
+export type EntityReferencesBySchemaByIDType = BySchemaByIDMapType<
+  EntityReferenceType[]
+>;
+
 export type StateType = {
   schemaReferences: SchemaReferencesType,
+  entityReferences: EntityReferencesBySchemaByIDType,
   schemaEntities: BySchemaByIDMapType<Object>
 };
 

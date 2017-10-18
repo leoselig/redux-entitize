@@ -18,9 +18,12 @@ describe("reducer", () => {
   }
 
   function createReducerWith1To1Schema() {
+    const authorSchema = new schema.Entity("authors");
+
     return createEntitiesReducer({
+      authors: authorSchema,
       articles: new schema.Entity("articles", {
-        author: new schema.Entity("authors")
+        author: authorSchema
       })
     });
   }
@@ -63,7 +66,9 @@ describe("reducer", () => {
       it("puts no reference for schema into initial state", () => {
         expect(
           getInitialState(createReducerWithSingleSchema()).schemaReferences
-        ).toEqual({});
+        ).toEqual({
+          articles: []
+        });
       });
     });
 
@@ -78,7 +83,8 @@ describe("reducer", () => {
               viaField: "author",
               relationType: "one"
             }
-          ]
+          ],
+          authors: []
         });
       });
     });
@@ -94,14 +100,15 @@ describe("reducer", () => {
               viaField: "comments",
               relationType: "many"
             }
-          ]
+          ],
+          comments: []
         });
       });
     });
   });
 
   describe("when receiving DELETE_ENTITY action", () => {
-    describe("with known entity", () => {
+    describe("when updating a known entity", () => {
       test("removes entity from state", () => {
         const store = setupSingleEntityStore();
 
@@ -152,10 +159,45 @@ describe("reducer", () => {
         });
       });
     });
+    describe("when initilized with an 1:n entity schema", () => {
+      test("removes referenced id from field in parent entity", () => {
+        const store = setupStoreWith1ToNSchema();
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_1",
+            title: "Foo Bar",
+            comments: [
+              {
+                id: "comment_1",
+                title: "Good"
+              },
+              {
+                id: "comment_2",
+                title: "Bad"
+              }
+            ]
+          })
+        );
+
+        store.dispatch(deleteEntityAction("comments", "comment_1"));
+
+        expect(store.getState().entities.schemaEntities).toEqual({
+          articles: {
+            article_1: {
+              id: "article_1",
+              title: "Foo Bar",
+              comments: ["comment_2"]
+            }
+          },
+          comments: {}
+        });
+      });
+    });
   });
 
   describe("when receiving UPDATE_ENTITY action", () => {
-    describe("with new entity", () => {
+    describe("when updating with a new entity", () => {
       test("puts entity into state", () => {
         const store = setupSingleEntityStore();
 
@@ -176,7 +218,7 @@ describe("reducer", () => {
         });
       });
     });
-    describe("with known entity", () => {
+    describe("when updating a known entity", () => {
       test("merges old and new entity", () => {
         const store = setupSingleEntityStore();
 
@@ -222,7 +264,34 @@ describe("reducer", () => {
     });
 
     describe("when initilized with a nested entity schema", () => {
-      describe("with new entity", () => {
+      describe("when adding an entity without references", () => {
+        it("adds only that entity without any references", () => {
+          const store = setupStoreWith1To1Schema();
+
+          store.dispatch(
+            updateEntityAction("authors", {
+              id: "comment_1",
+              name: "Mrs. Where is my article?"
+            })
+          );
+
+          expect(store.getState().entities.schemaEntities).toEqual({
+            articles: {},
+            authors: {
+              comment_1: {
+                id: "comment_1",
+                name: "Mrs. Where is my article?"
+              }
+            }
+          });
+          expect(store.getState().entities.entityReferences).toEqual({
+            articles: {},
+            authors: {}
+          });
+        });
+      });
+
+      describe("when updating with a new entity", () => {
         function update1To1Entity() {
           const store = setupStoreWith1To1Schema();
 
@@ -259,8 +328,25 @@ describe("reducer", () => {
             }
           });
         });
+        test("puts entity reference into state", () => {
+          expect(
+            update1To1Entity().getState().entities.entityReferences
+          ).toEqual({
+            articles: {},
+            authors: {
+              author_1: [
+                {
+                  toSchema: "articles",
+                  field: "author",
+                  relationType: "one",
+                  id: "article_1"
+                }
+              ]
+            }
+          });
+        });
       });
-      describe("with known entity", () => {
+      describe("when updating a known entity", () => {
         function update1To1ExistingEntity() {
           const store = setupStoreWith1To1Schema();
 
@@ -340,7 +426,7 @@ describe("reducer", () => {
 
         return store;
       }
-      describe("with new entity", () => {
+      describe("when updating with a new entity", () => {
         test("puts entity and nested entity into each state", () => {
           expect(
             update1ToNEntity().getState().entities.schemaEntities
@@ -365,7 +451,7 @@ describe("reducer", () => {
           });
         });
       });
-      describe("with known entity", () => {
+      describe("when updating a known entity", () => {
         function updateExisting1ToNEntity() {
           const store = setupStoreWith1ToNSchema();
 
@@ -421,7 +507,85 @@ describe("reducer", () => {
                 bar: "changed",
                 baz: "is new"
               }
-            });
+            }
+          });
+        });
+      });
+      describe("that adds one, keeps one and removes one other referenced entity", () => {
+        test("contains only kept and new reference", () => {
+          const store = setupStoreWith1ToNSchema();
+
+          store.dispatch(
+            updateEntityAction("articles", {
+              id: "article_1",
+              comments: [{ id: "comment_1_kept" }, { id: "comment_2_removed" }]
+            })
+          );
+
+          store.dispatch(
+            updateEntityAction("articles", {
+              id: "article_1",
+              comments: [{ id: "comment_1_kept" }, { id: "comment_3_added" }]
+            })
+          );
+          expect(store.getState().entities.entityReferences).toEqual({
+            articles: {},
+            comments: {
+              comment_1_kept: [
+                {
+                  toSchema: "articles",
+                  field: "comments",
+                  relationType: "many",
+                  id: "article_1"
+                }
+              ],
+              comment_3_added: [
+                {
+                  toSchema: "articles",
+                  field: "comments",
+                  relationType: "many",
+                  id: "article_1"
+                }
+              ]
+            }
+          });
+        });
+      });
+      describe("when adding an entity that references an already existing & referneces entity", () => {
+        test("merges the references of the old and new entities", () => {
+          const store = setupStoreWith1ToNSchema();
+
+          store.dispatch(
+            updateEntityAction("articles", {
+              id: "article_1",
+              comments: [{ id: "comment_1" }]
+            })
+          );
+          store.dispatch(
+            updateEntityAction("articles", {
+              id: "article_2",
+              comments: [{ id: "comment_1" }]
+            })
+          );
+
+          expect(store.getState().entities.entityReferences).toEqual({
+            articles: {},
+            comments: {
+              comment_1: [
+                {
+                  toSchema: "articles",
+                  field: "comments",
+                  relationType: "many",
+                  id: "article_1"
+                },
+                {
+                  toSchema: "articles",
+                  field: "comments",
+                  relationType: "many",
+                  id: "article_2"
+                }
+              ]
+            }
           });
         });
       });

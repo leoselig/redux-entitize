@@ -1,10 +1,16 @@
 // @flow
 
 import omit from "lodash/omit";
+import without from "lodash/without";
 import deepExtend from "deep-extend";
 import { normalize } from "normalizr";
 
-import type { SchemaMapType, StateType, SchemaReferencesType } from "./types";
+import type {
+  SchemaMapType,
+  StateType,
+  SchemaReferencesType,
+  EntityReferencesBySchemaByIDType
+} from "./types";
 import {
   type UpdateEntityActionType,
   type UpdateEntitiesActionType,
@@ -19,6 +25,10 @@ function getInitialState(schemas: SchemaMapType<*>): StateType {
       .reduce(
         (state, nextSchema) => ({
           ...state,
+          entityReferences: {
+            ...state.entityReferences,
+            [nextSchema.key]: {}
+          },
           schemaEntities: {
             ...state.schemaEntities,
             [nextSchema.key]: {}
@@ -26,6 +36,7 @@ function getInitialState(schemas: SchemaMapType<*>): StateType {
         }),
         {
           schemaReferences: getReferencesForSchema(schemas),
+          entityReferences: {},
           schemaEntities: {}
         }
       );
@@ -66,7 +77,11 @@ function updateEntity(
 
   const { entities } = normalize(data, schemas[schema]);
 
-  return deepExtend({}, state, { schemaEntities: entities });
+  return {
+    ...state,
+    schemaEntities: deepExtend({}, state.schemaEntities, entities),
+    entityReferences: getNewEntityReferences(state, entities)
+  };
 }
 
 function handleDeleteEntity(
@@ -79,6 +94,7 @@ function handleDeleteEntity(
     ...state,
     schemaEntities: {
       ...state.schemaEntities,
+      ...getUpdatedEntitiesForDeletion(state, schema, id),
       [schema]: omit(state[schema], id)
     }
   };
@@ -114,15 +130,13 @@ function getReferencesForSchema(schemas): SchemaReferencesType {
   Object.keys(schemas).forEach(referencingSchemaName => {
     const referencingSchema = schemas[referencingSchemaName];
 
+    schemaReferences[referencingSchemaName] = [];
+
     Object.keys(referencingSchema.schema).forEach(viaField => {
       const {
         referencedSchemaName,
         relationType
       } = getReferencedSchemaNameForField(referencingSchema, viaField);
-
-      if (!schemaReferences[referencingSchemaName]) {
-        schemaReferences[referencingSchemaName] = [];
-      }
 
       schemaReferences[referencingSchemaName].push({
         toSchema: referencedSchemaName,
@@ -145,4 +159,114 @@ function getReferencedSchemaNameForField(normalizrSchema, field: string) {
       ? normalizrSchema.schema[field][0].key
       : normalizrSchema.schema[field].key
   };
+}
+
+function getNewEntityReferences(
+  state,
+  updatedEntities
+): EntityReferencesBySchemaByIDType {
+  const entityReferences = {
+    ...state.entityReferences
+  };
+
+  Object.keys(state.schemaReferences).forEach(referencingSchemaName => {
+    getNewEntityReferencesForSchema(
+      referencingSchemaName,
+      state.schemaReferences[referencingSchemaName],
+      state.entityReferences,
+      entityReferences,
+      updatedEntities[referencingSchemaName] || {},
+      state.schemaEntities[referencingSchemaName]
+    );
+  });
+
+  return entityReferences;
+}
+
+function getNewEntityReferencesForSchema(
+  schemaName,
+  schemaReferences,
+  previousEntityReferences,
+  nextEntityReferences,
+  updatedSchemaEntities,
+  previousSchemaEntities
+) {
+  Object.keys(updatedSchemaEntities).forEach(referencingEntityId => {
+    const nextReferencingEntity = updatedSchemaEntities[referencingEntityId];
+    const previousReferencingEntity =
+      previousSchemaEntities[referencingEntityId] || {};
+
+    schemaReferences.forEach(referenceOfCurrentSchema => {
+      const { toSchema, viaField, relationType } = referenceOfCurrentSchema;
+      const previousReferencedIds = getReferencedIds(
+        previousReferencingEntity,
+        referenceOfCurrentSchema
+      );
+      const nextReferencedIds = getReferencedIds(
+        nextReferencingEntity,
+        referenceOfCurrentSchema
+      );
+      const previousReferencesOfCurrentSchema =
+        previousEntityReferences[toSchema] || {};
+      const nextReferencesOfCurrentSchema = {};
+
+      // If an entity referenced an ID in the current field before, but that ID is not contained in
+      // updated entity anymore, it means that the reference is gone
+      // When copying the old references into the new references, those are left out
+      previousReferencedIds.forEach(previousReferencedId => {
+        if (!nextReferencedIds.includes(previousReferencedId)) {
+          return;
+        }
+
+        nextReferencesOfCurrentSchema[previousReferencedId] =
+          previousReferencesOfCurrentSchema[previousReferencedId];
+      });
+
+      nextReferencedIds.forEach(referencedEntityId => {
+        const previousReferencesOfEntity =
+          previousReferencesOfCurrentSchema[referencedEntityId] || [];
+
+        if (!nextReferencesOfCurrentSchema[referencedEntityId]) {
+          nextReferencesOfCurrentSchema[
+            referencedEntityId
+          ] = previousReferencesOfEntity.filter(
+            previousReferenceOfEntity =>
+              previousReferenceOfEntity.id !== referencingEntityId
+          );
+        }
+
+        const newReference = {
+          field: viaField,
+          id: referencingEntityId,
+          relationType,
+          toSchema: schemaName
+        };
+
+        // Imagine an entity is updated with the same references twice. Then, we will discover
+        // the same references again. To avoid having duplicates, simply filter these out
+        const isReferenceAlreadyKnown = !!nextReferencesOfCurrentSchema[
+          referencedEntityId
+        ].find(isEqualReference.bind(null, newReference));
+
+        isReferenceAlreadyKnown ||
+          nextReferencesOfCurrentSchema[referencedEntityId].push(newReference);
+      });
+
+      nextEntityReferences[toSchema] = nextReferencesOfCurrentSchema;
+    });
+  });
+}
+
+function getReferencedIds(entity, schemaReference) {
+  const { relationType, viaField } = schemaReference;
+
+  return (relationType === "one" ? [entity[viaField]] : entity[viaField]) || [];
+}
+
+function isEqualReference(reference1, reference2) {
+  return (
+    reference1.field === reference2.field &&
+    reference1.id === reference2.id &&
+    reference1.toSchema === reference2.toSchema
+  );
 }
