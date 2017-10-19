@@ -270,3 +270,34 @@ function isEqualReference(reference1, reference2) {
     reference1.toSchema === reference2.toSchema
   );
 }
+
+function getUpdatedEntitiesForDeletion(
+  state,
+  deletedSchemaName,
+  deletedEntityId
+) {
+  const referencesPerEntity = state.entityReferences[deletedSchemaName];
+  const references =
+    (referencesPerEntity && referencesPerEntity[deletedEntityId]) || [];
+
+  return references.reduce(
+    (toBeUpdatedEntities, { toSchema, id, field, relationType }) => {
+      const entity = state.schemaEntities[toSchema][id];
+      const newReferencesValue = relationType === "one"
+        ? null
+        : without(entity[field], deletedEntityId);
+
+      return {
+        ...toBeUpdatedEntities,
+        [toSchema]: {
+          ...toBeUpdatedEntities[toSchema],
+          [id]: {
+            ...entity,
+            [field]: newReferencesValue
+          }
+        }
+      };
+    },
+    {}
+  );
+}

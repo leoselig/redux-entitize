@@ -130,8 +130,8 @@ describe("reducer", () => {
       });
     });
 
-    describe("when initilized with a nested entity schema", () => {
-      test.skip("sets reference in parent entity to null", () => {
+    describe("when initilized with a 1:1 entity schema", () => {
+      test("sets reference in parent entity to null", () => {
         const store = setupStoreWith1To1Schema();
 
         store.dispatch(
