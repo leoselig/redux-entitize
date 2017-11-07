@@ -2,7 +2,6 @@
 
 import omit from "lodash/omit";
 import without from "lodash/without";
-import deepExtend from "deep-extend";
 import { normalize } from "normalizr";
 
 import type { SchemaMapType, StateType } from "../types";
@@ -75,12 +74,17 @@ function updateEntity(
     throw new Error(`No 'id'-field found in entitiy of schema '${schema}'`);
   }
 
-  const { entities } = normalize(data, schemas[schema]);
+  const entitiesBefore = state.schemaEntities;
+  const { entities: entitiesUpdated } = normalize(data, schemas[schema]);
 
   return {
     ...state,
-    schemaEntities: deepExtend({}, state.schemaEntities, entities),
-    entityReferences: updateReferencesForUpdatedEntities(state, entities)
+    schemaEntities: mergeEntitiesOfAllSchemas(
+      schemas,
+      entitiesBefore,
+      entitiesUpdated
+    ),
+    entityReferences: updateReferencesForUpdatedEntities(state, entitiesUpdated)
   };
 }
 
@@ -159,4 +163,41 @@ function updateEntitiesForDeletedEntity(
       }
     };
   }, {});
+}
+
+function mergeEntitiesOfAllSchemas(
+  schemas,
+  schemaEntitiesPrevious,
+  schemaEntitiesUpdated
+) {
+  return Object.keys(schemas).reduce(
+    (nextSchemaEntities, schemaName) => ({
+      ...nextSchemaEntities,
+      [schemaName]: mergeEntitiesOfSingleSchema(
+        schemaEntitiesPrevious[schemaName] || {},
+        schemaEntitiesUpdated[schemaName] || {}
+      )
+    }),
+    {}
+  );
+}
+
+// Merges previous entities of a single schema with a new version of these entities
+//
+// This is better than simply deep-extending the old and new entities for two reasons:
+// - deep extension iterates over all properties of the new and old state deeply (meaning it even
+//   looks at unchanged fields on unchanged entities)
+// - deep extension destroys the reference-equality of entities when they are unchanged since it
+//   copies over the values one-by-one into the new object
+function mergeEntitiesOfSingleSchema(entitiesBefore, entitiesUpdated) {
+  return Object.keys(entitiesUpdated).reduce(
+    (entitiesCurrent, updatedEntityId) => ({
+      ...entitiesCurrent,
+      [updatedEntityId]: {
+        ...entitiesBefore[updatedEntityId],
+        ...entitiesUpdated[updatedEntityId]
+      }
+    }),
+    entitiesBefore
+  );
 }

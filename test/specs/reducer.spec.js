@@ -1,6 +1,8 @@
 // @flow
 
 import { schema } from "normalizr";
+import deepFreeze from "deep-freeze";
+import range from "lodash/range";
 
 import createEntitiesReducer from "../../src/reducer";
 import {
@@ -259,6 +261,33 @@ describe("reducer", () => {
             }
           }
         });
+      });
+      test("does not change other entities", () => {
+        const store = setupSingleEntityStore();
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_1",
+            title: "Foo Bar"
+          })
+        );
+
+        const article1 = store.getState().entities.schemaEntities.articles
+          .article_1;
+
+        deepFreeze(article1);
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_2",
+            title: "Foo Bar"
+          })
+        );
+
+        expect(
+          store.getState().entities.schemaEntities.articles.article_1 ===
+            article1
+        ).toEqual(true);
       });
     });
     describe("when updating a known entity", () => {
@@ -653,6 +682,44 @@ describe("reducer", () => {
             }
           }
         });
+      });
+    });
+    describe("with 1000 entities 2 times", () => {
+      test("does not take longer than a fixed threshold", () => {
+        const store = setupStoreWith1ToNSchema();
+
+        const initialEntities = range(0, 1000).map(i => ({
+          id: `article_${i}`,
+          title: `The Article ${i}`,
+          comments: [
+            {
+              id: `article_${i}_comment_1`,
+              content: "The Comment 1"
+            },
+            {
+              id: `article_${i}_comment_2`,
+              content: "The Comment 2"
+            }
+          ]
+        }));
+
+        const updatedEntities = range(0, 1000).map(i => ({
+          id: `article_${i}`,
+          title: `The Article ${i} [changed]`,
+          comments: [
+            {
+              id: `article_${i}_comment_1`,
+              content: "The Comment 1 [changed]"
+            },
+            {
+              id: `article_${i}_comment_2`,
+              content: "The Comment 2 [changed]"
+            }
+          ]
+        }));
+
+        store.dispatch(updateEntitiesAction("articles", initialEntities));
+        store.dispatch(updateEntitiesAction("articles", updatedEntities));
       });
     });
   });

@@ -1,0 +1,6 @@
+dateTime: '2017-12-05T09:10:47.832Z'
+component: reducer
+kind: change
+description: >-
+  Updating entities is now way faster (1000 entities in ~3 seconds instead of
+  30) due to no longer deep-cloning the entire state.
