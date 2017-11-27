@@ -284,10 +284,7 @@ describe("reducer", () => {
               }
             }
           });
-          expect(store.getState().entities.entityReferences).toEqual({
-            articles: {},
-            authors: {}
-          });
+          expect(store.getState().entities.entityReferences).toEqual({});
         });
       });
 
@@ -332,16 +329,13 @@ describe("reducer", () => {
           expect(
             update1To1Entity().getState().entities.entityReferences
           ).toEqual({
-            articles: {},
-            authors: {
-              author_1: [
-                {
-                  toSchema: "articles",
-                  field: "author",
-                  relationType: "one",
-                  id: "article_1"
-                }
-              ]
+            "authors#author_1": {
+              "articles#article_1.author": {
+                fromID: "article_1",
+                fromSchema: "articles",
+                relationType: "one",
+                viaField: "author"
+              }
             }
           });
         });
@@ -529,24 +523,22 @@ describe("reducer", () => {
             })
           );
           expect(store.getState().entities.entityReferences).toEqual({
-            articles: {},
-            comments: {
-              comment_1_kept: [
-                {
-                  toSchema: "articles",
-                  field: "comments",
-                  relationType: "many",
-                  id: "article_1"
-                }
-              ],
-              comment_3_added: [
-                {
-                  toSchema: "articles",
-                  field: "comments",
-                  relationType: "many",
-                  id: "article_1"
-                }
-              ]
+            "comments#comment_1_kept": {
+              "articles#article_1.comments": {
+                fromID: "article_1",
+                fromSchema: "articles",
+                relationType: "many",
+                viaField: "comments"
+              }
+            },
+            "comments#comment_2_removed": {},
+            "comments#comment_3_added": {
+              "articles#article_1.comments": {
+                fromID: "article_1",
+                fromSchema: "articles",
+                relationType: "many",
+                viaField: "comments"
+              }
             }
           });
         });
@@ -569,22 +561,19 @@ describe("reducer", () => {
           );
 
           expect(store.getState().entities.entityReferences).toEqual({
-            articles: {},
-            comments: {
-              comment_1: [
-                {
-                  toSchema: "articles",
-                  field: "comments",
-                  relationType: "many",
-                  id: "article_1"
-                },
-                {
-                  toSchema: "articles",
-                  field: "comments",
-                  relationType: "many",
-                  id: "article_2"
-                }
-              ]
+            "comments#comment_1": {
+              "articles#article_1.comments": {
+                fromID: "article_1",
+                fromSchema: "articles",
+                relationType: "many",
+                viaField: "comments"
+              },
+              "articles#article_2.comments": {
+                fromID: "article_2",
+                fromSchema: "articles",
+                relationType: "many",
+                viaField: "comments"
+              }
             }
           });
         });

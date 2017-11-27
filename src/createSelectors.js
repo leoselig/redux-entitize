@@ -5,7 +5,6 @@ import { createSelector } from "reselect";
 
 import createHashedSelector from "./createHashedSelector";
 import type {
-  EntityType,
   SchemaMapType,
   StateWithEntitiesType,
   PropsWithIdType,
@@ -71,7 +70,7 @@ export default function createSelectors<SchemasType: string>(
     };
   }, {});
 
-  function createSelectSingle(schema: SchemasType): ?EntityType {
+  function createSelectSingle(schema: SchemasType) {
     return createHashedSelector(
       [selectSchemaEntities, schemaSelectors[schema].selectIdFromProps],
       (schemaEntities, id) =>
