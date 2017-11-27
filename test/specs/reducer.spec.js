@@ -543,7 +543,7 @@ describe("reducer", () => {
           });
         });
       });
-      describe("when adding an entity that references an already existing & referneces entity", () => {
+      describe("when adding an entity that references an already existing & references entity", () => {
         test("merges the references of the old and new entities", () => {
           const store = setupStoreWith1ToNSchema();
 
