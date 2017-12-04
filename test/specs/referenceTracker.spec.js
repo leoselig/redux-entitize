@@ -117,7 +117,10 @@ describe("referenceTracker", () => {
             "sourceId2",
             "targetEntity"
           );
-          const references3 = deleteAllReferencesTo(references2, "targetEntity");
+          const references3 = deleteAllReferencesTo(
+            references2,
+            "targetEntity"
+          );
 
           expect(getReferencesTo(references3, "targetEntity")).toEqual({});
         });
