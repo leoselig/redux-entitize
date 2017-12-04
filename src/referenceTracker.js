@@ -3,40 +3,40 @@
 import type { ReferenceMapType } from "./types";
 
 export function getReferencesTo(
-  referencesTo: ReferenceMapType<*>,
-  entity: string
+  referenceMap: ReferenceMapType<*>,
+  toEntity: string
 ) {
-  return referencesTo[entity] || {};
+  return referenceMap[toEntity] || {};
 }
 
 export function addReference(
-  referencesTo: ReferenceMapType<*>,
-  from: string,
+  referenceMap: ReferenceMapType<*>,
+  fromEntity: string,
   toEntity: string,
   metaData?: mixed = null
 ) {
   return {
-    ...referencesTo,
+    ...referenceMap,
     [toEntity]: {
-      ...referencesTo[toEntity],
-      [from]: metaData
+      ...referenceMap[toEntity],
+      [fromEntity]: metaData
     }
   };
 }
 
 export function deleteReference(
-  referencesTo: ReferenceMapType<*>,
-  from: string,
+  referenceMap: ReferenceMapType<*>,
+  fromEntity: string,
   toEntity: string
 ) {
   const newReferencesToEntity = {
-    ...referencesTo[toEntity]
+    ...referenceMap[toEntity]
   };
 
-  delete newReferencesToEntity[from];
+  delete newReferencesToEntity[fromEntity];
 
   return {
-    ...referencesTo,
+    ...referenceMap,
     [toEntity]: newReferencesToEntity
   };
 }
