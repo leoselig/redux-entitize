@@ -50,7 +50,7 @@ type BySchemaByIDMapType<D> = {
 export type StateType = {
   schemaReferences: SchemaReferencesType,
   entityReferences: EntityReferencesType,
-  schemaEntities: BySchemaByIDMapType<Object>
+  schemaEntities: BySchemaByIDMapType<EntityType>
 };
 
 export type StateWithEntitiesType = {
