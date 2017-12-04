@@ -24,7 +24,11 @@ describe("selectors", () => {
             ],
             comments: []
           },
-          entityReferences: {},
+          entityReferences: {
+            // Normally, it's not possible for this to be empty when entites with references are in
+            // the state. However, selectors do not depend on references in any way, so it's
+            // omitted here for simplicity
+          },
           schemaEntities: {
             articles: {
               article_1: {
