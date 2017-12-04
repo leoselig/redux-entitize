@@ -30,8 +30,6 @@ export function updateReferencesForUpdatedEntities(
       updateReferencesForAllEntitiesOfSingleSchema(
         schemaName,
         state.schemaReferences,
-        state.schemaReferences[schemaName],
-        state.entityReferences,
         currentReferencesTo,
         updatedEntities[schemaName] || {},
         state.schemaEntities[schemaName]
@@ -42,17 +40,15 @@ export function updateReferencesForUpdatedEntities(
 
 function updateReferencesForAllEntitiesOfSingleSchema(
   schemaName,
-  allSchemaReferences,
   schemaReferences,
   previousEntityReferences,
-  nextEntityReferences,
   updatedSchemaEntities,
   previousSchemaEntities
 ) {
   return Object.keys(updatedSchemaEntities).reduce(
     (currentReferencesTo, referencingEntityId) =>
       updateReferencesForSingleEntity(
-        allSchemaReferences,
+        schemaReferences,
         currentReferencesTo,
         schemaName,
         updatedSchemaEntities[referencingEntityId],
