@@ -3,7 +3,8 @@
 import {
   getReferencesTo,
   addReference,
-  deleteReference
+  deleteReference,
+  deleteAllReferencesTo
 } from "../../src/referenceTracker";
 
 describe("referenceTracker", () => {
@@ -103,6 +104,23 @@ describe("referenceTracker", () => {
         expect(unrelatedReferencesBefore === unrelatedReferencesAfter).toBe(
           true
         );
+      });
+    });
+  });
+  describe("when 2 references are added", () => {
+    describe("and deleteAllReferencesTo() is called for target entity", () => {
+      describe("and getReferencesTo() is called for target entity", () => {
+        it("returns empty references", () => {
+          const references1 = addReference({}, "sourceId1", "targetEntity");
+          const references2 = addReference(
+            references1,
+            "sourceId2",
+            "targetEntity"
+          );
+          const references3 = deleteAllReferencesTo(references2, "targetEntity");
+
+          expect(getReferencesTo(references3, "targetEntity")).toEqual({});
+        });
       });
     });
   });

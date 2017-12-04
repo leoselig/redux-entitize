@@ -160,7 +160,7 @@ describe("reducer", () => {
       });
     });
     describe("when initilized with an 1:n entity schema", () => {
-      test("removes referenced id from field in parent entity", () => {
+      function addArticleWith2CommentsAndDelete1() {
         const store = setupStoreWith1ToNSchema();
 
         store.dispatch(
@@ -182,6 +182,11 @@ describe("reducer", () => {
 
         store.dispatch(deleteEntityAction("comments", "comment_1"));
 
+        return { store };
+      }
+      test("removes referenced id from field in parent entity", () => {
+        const { store } = addArticleWith2CommentsAndDelete1();
+
         expect(store.getState().entities.schemaEntities).toEqual({
           articles: {
             article_1: {
@@ -194,6 +199,39 @@ describe("reducer", () => {
             comment_2: {
               id: "comment_2",
               title: "Bad"
+            }
+          }
+        });
+      });
+      test("removes referenced id from field in parent entity", () => {
+        const { store } = addArticleWith2CommentsAndDelete1();
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_1",
+            title: "Foo Bar",
+            comments: [
+              {
+                id: "comment_1",
+                title: "Good"
+              },
+              {
+                id: "comment_2",
+                title: "Bad"
+              }
+            ]
+          })
+        );
+
+        store.dispatch(deleteEntityAction("comments", "comment_1"));
+
+        expect(store.getState().entities.entityReferences).toEqual({
+          "comments#comment_2": {
+            "articles#article_1.comments": {
+              fromID: "article_1",
+              fromSchema: "articles",
+              relationType: "many",
+              viaField: "comments"
             }
           }
         });

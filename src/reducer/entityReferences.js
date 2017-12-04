@@ -1,6 +1,5 @@
 // @flow
 
-import without from "lodash/without";
 import difference from "lodash/difference";
 
 import type {
@@ -8,13 +7,12 @@ import type {
   SchemaReferencesType,
   EntityReferencesType,
   SchemaReferenceType,
-  EntityReferenceType,
   SchemaEntitiesMapType
 } from "../types";
 import {
   addReference,
   deleteReference,
-  getReferencesTo
+  deleteAllReferencesTo
 } from "../referenceTracker";
 
 // This module provides helpers to update the references between entities when they get added,
@@ -149,44 +147,23 @@ function getReferencedIds(entity, schemaReference) {
   return (relationType === "one" ? [fieldValue] : fieldValue) || [];
 }
 
-function getReferenceID(fromSchema, fromID, viaField) {
+export function updateReferencesForDeletedEntity(
+  state: StateType,
+  schemaName: string,
+  deletedEntityID: string
+): EntityReferencesType {
+  return deleteAllReferencesTo(
+    state.entityReferences,
+    getReferenceID(schemaName, deletedEntityID)
+  );
+}
+
+export function getReferenceID(
+  fromSchema: string,
+  fromID: string,
+  viaField?: string
+) {
   const partWithoutField = `${fromSchema}#${fromID}`;
 
   return viaField ? `${partWithoutField}.${viaField}` : partWithoutField;
-}
-
-export function updateReferencesForDeletedEntity(
-  state: StateType,
-  deletedSchemaName: string,
-  deletedEntityId: string
-) {
-  const referencesToDeletedEntity = getReferencesTo(
-    state.entityReferences,
-    getReferenceID(deletedSchemaName, deletedEntityId)
-  );
-
-  return Object.keys(
-    referencesToDeletedEntity
-  ).reduce((toBeUpdatedEntities, referenceID) => {
-    // $FlowFixMe We are the only one calling addReference() so we know we get the correct reference meta data back here
-    const entityReference: EntityReferenceType =
-      referencesToDeletedEntity[referenceID];
-    const { fromSchema, fromID, viaField, relationType } = entityReference;
-
-    const referencingEntity = state.schemaEntities[fromSchema][fromID];
-    const newReferencesValue = relationType === "one"
-      ? null
-      : without(referencingEntity[viaField], deletedEntityId);
-
-    return {
-      ...toBeUpdatedEntities,
-      [fromSchema]: {
-        ...toBeUpdatedEntities[fromSchema],
-        [fromID]: {
-          ...referencingEntity,
-          [viaField]: newReferencesValue
-        }
-      }
-    };
-  }, {});
 }
