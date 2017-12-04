@@ -41,59 +41,59 @@ export function updateReferencesForUpdatedEntities(
 function updateReferencesForAllEntitiesOfSingleSchema(
   schemaName,
   schemaReferences,
-  previousEntityReferences,
-  updatedSchemaEntities,
-  previousSchemaEntities
+  entityReferencesBefore,
+  schemaEntitiesUpdated,
+  schemaEntitiesBefore
 ) {
-  return Object.keys(updatedSchemaEntities).reduce(
-    (currentReferencesTo, referencingEntityId) =>
+  return Object.keys(schemaEntitiesUpdated).reduce(
+    (entityReferencesCurrent, referencingEntityId) =>
       updateReferencesForSingleEntity(
         schemaReferences,
-        currentReferencesTo,
+        entityReferencesCurrent,
         schemaName,
-        updatedSchemaEntities[referencingEntityId],
-        previousSchemaEntities[referencingEntityId] || {
+        schemaEntitiesUpdated[referencingEntityId],
+        schemaEntitiesBefore[referencingEntityId] || {
           id: referencingEntityId
         }
       ),
-    previousEntityReferences
+    entityReferencesBefore
   );
 }
 
 function updateReferencesForSingleEntity(
   schemaReferences: SchemaReferencesType,
-  previousReferencesTo: ReferencesToType,
-  updatedEntitySchemaName: string,
-  nextEntityData: { id: string },
-  previousEntityData: { id: string }
+  entityReferencesBefore: ReferencesToType,
+  schemaNameOfEntity: string,
+  entityDataUpdated: { id: string },
+  entityDataBefore: { id: string }
 ): ReferencesToType {
-  return schemaReferences[updatedEntitySchemaName].reduce(
-    (currentReferencesTo, schemaReference) =>
+  return schemaReferences[schemaNameOfEntity].reduce(
+    (entityReferencesCurrent, schemaReference) =>
       updateReferencesForSingleEntityForSingleSchemaReference(
         schemaReference,
-        currentReferencesTo,
-        updatedEntitySchemaName,
-        nextEntityData,
-        previousEntityData
+        entityReferencesCurrent,
+        schemaNameOfEntity,
+        entityDataUpdated,
+        entityDataBefore
       ),
-    previousReferencesTo
+    entityReferencesBefore
   );
 }
 
 function updateReferencesForSingleEntityForSingleSchemaReference(
   schemaReference: SchemaReferenceType,
-  previousReferencesTo: ReferencesToType,
-  updatedEntitySchemaName: string,
-  updatedEntityData: { id: string },
-  previousEntityData: { id: string }
+  entityReferencesBefore: ReferencesToType,
+  schemaNameOfEntity: string,
+  entityDataUpdated: { id: string },
+  entityDataBefore: { id: string }
 ): ReferencesToType {
-  const fromID = updatedEntityData.id;
+  const fromID = entityDataUpdated.id;
   const nextReferencedIDs = getReferencedIds(
-    updatedEntityData,
+    entityDataUpdated,
     schemaReference
   );
   const previousReferencedIDs = getReferencedIds(
-    previousEntityData,
+    entityDataBefore,
     schemaReference
   );
 
@@ -106,19 +106,19 @@ function updateReferencesForSingleEntityForSingleSchemaReference(
 
   // Add references for all IDs that appeared
   const referencesWithAdded = referencedIDsToBeAdded.reduce(
-    (currentReferencesTo, toId) =>
+    (entityReferencesCurrent, toID) =>
       addReference(
-        currentReferencesTo,
-        getReferenceID(updatedEntitySchemaName, fromID, viaField),
-        getReferenceID(toSchema, toId),
+        entityReferencesCurrent,
+        getReferenceID(schemaNameOfEntity, fromID, viaField),
+        getReferenceID(toSchema, toID),
         {
-          fromSchema: updatedEntitySchemaName,
+          fromSchema: schemaNameOfEntity,
           fromID,
           viaField,
           relationType
         }
       ),
-    previousReferencesTo
+    entityReferencesBefore
   );
 
   // Delete references for all IDs that disappeared
@@ -128,10 +128,10 @@ function updateReferencesForSingleEntityForSingleSchemaReference(
   );
 
   return referencedIDsToBeDeleted.reduce(
-    (currentReferencesTo, toId) =>
+    (entityReferencesCurrent, toId) =>
       deleteReference(
-        currentReferencesTo,
-        getReferenceID(updatedEntitySchemaName, fromID, viaField),
+        entityReferencesCurrent,
+        getReferenceID(schemaNameOfEntity, fromID, viaField),
         getReferenceID(toSchema, toId)
       ),
     referencesWithAdded
