@@ -6,7 +6,7 @@ import difference from "lodash/difference";
 import type {
   StateType,
   SchemaReferencesType,
-  ReferencesToType,
+  EntityReferencesType,
   SchemaReferenceType,
   EntityReferenceType,
   SchemaEntitiesMapType
@@ -24,7 +24,7 @@ import {
 export function updateReferencesForUpdatedEntities(
   state: StateType,
   updatedEntities: { [schema: string]: SchemaEntitiesMapType }
-): ReferencesToType {
+): EntityReferencesType {
   return Object.keys(state.schemaReferences).reduce(
     (currentReferencesTo, schemaName) =>
       updateReferencesForAllEntitiesOfSingleSchema(
@@ -62,11 +62,11 @@ function updateReferencesForAllEntitiesOfSingleSchema(
 
 function updateReferencesForSingleEntity(
   schemaReferences: SchemaReferencesType,
-  entityReferencesBefore: ReferencesToType,
+  entityReferencesBefore: EntityReferencesType,
   schemaNameOfEntity: string,
   entityDataUpdated: { id: string },
   entityDataBefore: { id: string }
-): ReferencesToType {
+): EntityReferencesType {
   return schemaReferences[schemaNameOfEntity].reduce(
     (entityReferencesCurrent, schemaReference) =>
       updateReferencesForSingleEntityForSingleSchemaReference(
@@ -82,11 +82,11 @@ function updateReferencesForSingleEntity(
 
 function updateReferencesForSingleEntityForSingleSchemaReference(
   schemaReference: SchemaReferenceType,
-  entityReferencesBefore: ReferencesToType,
+  entityReferencesBefore: EntityReferencesType,
   schemaNameOfEntity: string,
   entityDataUpdated: { id: string },
   entityDataBefore: { id: string }
-): ReferencesToType {
+): EntityReferencesType {
   const fromID = entityDataUpdated.id;
   const nextReferencedIDs = getReferencedIds(
     entityDataUpdated,

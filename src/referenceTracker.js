@@ -3,14 +3,14 @@
 import type { ReferencesToType } from "./types";
 
 export function getReferencesTo(
-  referencesTo: ReferencesToType,
+  referencesTo: ReferencesToType<*>,
   entity: string
 ) {
   return referencesTo[entity] || {};
 }
 
 export function addReference(
-  referencesTo: ReferencesToType,
+  referencesTo: ReferencesToType<*>,
   from: string,
   toEntity: string,
   metaData?: mixed = null
@@ -25,7 +25,7 @@ export function addReference(
 }
 
 export function deleteReference(
-  referencesTo: ReferencesToType,
+  referencesTo: ReferencesToType<*>,
   from: string,
   toEntity: string
 ) {

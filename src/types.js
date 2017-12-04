@@ -2,12 +2,6 @@
 
 import { type Schema } from "normalizr";
 
-export type ReferencesToType = {
-  [toEntity: string]: {
-    [from: string]: null
-  }
-};
-
 export type SchemaMapType<SchemasType: string> = {
   [schemaName: SchemasType]: Schema
 };
@@ -33,6 +27,14 @@ export type EntityReferenceType = {
   relationType: RelationTypeType
 };
 
+export type ReferencesToType<MetaData> = {
+  [toEntity: string]: {
+    [from: string]: MetaData
+  }
+};
+
+export type EntityReferencesType = ReferencesToType<EntityReferenceType>;
+
 export type SchemaReferencesType = {
   [referencingSchema: string]: SchemaReferenceType[]
 };
@@ -47,7 +49,7 @@ type BySchemaByIDMapType<D> = {
 
 export type StateType = {
   schemaReferences: SchemaReferencesType,
-  entityReferences: ReferencesToType,
+  entityReferences: EntityReferencesType,
   schemaEntities: BySchemaByIDMapType<Object>
 };
 
