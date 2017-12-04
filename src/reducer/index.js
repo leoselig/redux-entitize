@@ -92,7 +92,7 @@ function handleDeleteEntity(
     schemaEntities: {
       ...state.schemaEntities,
       ...updateReferencesForDeletedEntity(state, schema, id),
-      [schema]: omit(state[schema], id)
+      [schema]: omit(state.schemaEntities[schema], id)
     }
   };
 }

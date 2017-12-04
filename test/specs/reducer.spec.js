@@ -190,7 +190,12 @@ describe("reducer", () => {
               comments: ["comment_2"]
             }
           },
-          comments: {}
+          comments: {
+            comment_2: {
+              id: "comment_2",
+              title: "Bad"
+            }
+          }
         });
       });
     });
