@@ -27,13 +27,13 @@ export type EntityReferenceType = {
   relationType: RelationTypeType
 };
 
-export type ReferencesToType<MetaData> = {
+export type ReferenceMapType<MetaData> = {
   [toEntity: string]: {
     [from: string]: MetaData
   }
 };
 
-export type EntityReferencesType = ReferencesToType<EntityReferenceType>;
+export type EntityReferencesType = ReferenceMapType<EntityReferenceType>;
 
 export type SchemaReferencesType = {
   [referencingSchema: string]: SchemaReferenceType[]

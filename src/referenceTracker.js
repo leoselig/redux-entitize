@@ -1,16 +1,16 @@
 // @flow
 
-import type { ReferencesToType } from "./types";
+import type { ReferenceMapType } from "./types";
 
 export function getReferencesTo(
-  referencesTo: ReferencesToType<*>,
+  referencesTo: ReferenceMapType<*>,
   entity: string
 ) {
   return referencesTo[entity] || {};
 }
 
 export function addReference(
-  referencesTo: ReferencesToType<*>,
+  referencesTo: ReferenceMapType<*>,
   from: string,
   toEntity: string,
   metaData?: mixed = null
@@ -25,7 +25,7 @@ export function addReference(
 }
 
 export function deleteReference(
-  referencesTo: ReferencesToType<*>,
+  referencesTo: ReferenceMapType<*>,
   from: string,
   toEntity: string
 ) {
