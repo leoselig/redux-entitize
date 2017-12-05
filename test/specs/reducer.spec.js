@@ -1,6 +1,8 @@
 // @flow
 
 import { schema } from "normalizr";
+import deepFreeze from "deep-freeze";
+import range from "lodash/range";
 
 import createEntitiesReducer from "../../src/reducer";
 import {
@@ -259,6 +261,33 @@ describe("reducer", () => {
             }
           }
         });
+      });
+      test("does not change other entities", () => {
+        const store = setupSingleEntityStore();
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_1",
+            title: "Foo Bar"
+          })
+        );
+
+        const article1 = store.getState().entities.schemaEntities.articles
+          .article_1;
+
+        deepFreeze(article1);
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_2",
+            title: "Foo Bar"
+          })
+        );
+
+        expect(
+          store.getState().entities.schemaEntities.articles.article_1 ===
+            article1
+        ).toEqual(true);
       });
     });
     describe("when updating a known entity", () => {
@@ -622,6 +651,43 @@ describe("reducer", () => {
         });
       });
     });
+    describe("when adding 2 articles with one comment each and deleting 1 comment", () => {
+      test("contains both articles and the comment that has not been deleted", () => {
+        const store = setupStoreWith1ToNSchema();
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_1",
+            comments: [{ id: "comment_1" }]
+          })
+        );
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_2",
+            comments: [{ id: "comment_2" }]
+          })
+        );
+        store.dispatch(deleteEntityAction("comments", "comment_1"));
+
+        expect(store.getState().entities.schemaEntities).toEqual({
+          articles: {
+            article_1: {
+              comments: [],
+              id: "article_1"
+            },
+            article_2: {
+              comments: ["comment_2"],
+              id: "article_2"
+            }
+          },
+          comments: {
+            comment_2: {
+              id: "comment_2"
+            }
+          }
+        });
+      });
+    });
   });
   describe("when receiving UPDATE_ENTITIES action", () => {
     describe("with new entities", () => {
@@ -653,6 +719,49 @@ describe("reducer", () => {
             }
           }
         });
+      });
+    });
+    describe("with 500 entities 2 times", () => {
+      const MAX_TIME_FOR_500_UPDATE = 5000;
+
+      test(`does not take longer than ${MAX_TIME_FOR_500_UPDATE}`, () => {
+        const startTime = Date.now();
+        const store = setupStoreWith1ToNSchema();
+
+        const initialEntities = range(0, 500).map(i => ({
+          id: `article_${i}`,
+          title: `The Article ${i}`,
+          comments: [
+            {
+              id: `article_${i}_comment_1`,
+              content: "The Comment 1"
+            },
+            {
+              id: `article_${i}_comment_2`,
+              content: "The Comment 2"
+            }
+          ]
+        }));
+
+        const updatedEntities = range(0, 500).map(i => ({
+          id: `article_${i}`,
+          title: `The Article ${i} [changed]`,
+          comments: [
+            {
+              id: `article_${i}_comment_1`,
+              content: "The Comment 1 [changed]"
+            },
+            {
+              id: `article_${i}_comment_2`,
+              content: "The Comment 2 [changed]"
+            }
+          ]
+        }));
+
+        store.dispatch(updateEntitiesAction("articles", initialEntities));
+        store.dispatch(updateEntitiesAction("articles", updatedEntities));
+
+        expect(Date.now() - startTime).toBeLessThan(MAX_TIME_FOR_500_UPDATE);
       });
     });
   });
