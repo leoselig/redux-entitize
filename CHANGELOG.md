@@ -2,6 +2,13 @@
 
 ## Version `next`
 
+## Version `0.5.1`
+
+### Changed
+- **Reducer:** Schema map inside state is now nested inside a `schemaEntities`-field (this is **not** considered a breaking change, since selectors still work)
+- **Reducer:** Now, when receiving a deletetion action, not only is the entity deleted but also all references to that entity from other entities are removed (e.g. when a comment is deleted, the `comments` in the article does not contain the comment afterwards anymore)
+- **Reducer:** Updating entities is now way faster (1000 entities in ~3 seconds instead of 30) due to no longer deep-cloning the entire state.
+
 ## Version `0.4.0`
 
 ### Changed
