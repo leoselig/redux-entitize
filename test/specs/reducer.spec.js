@@ -651,6 +651,43 @@ describe("reducer", () => {
         });
       });
     });
+    describe("when adding 2 articles with one comment each and deleting 1 comment", () => {
+      test("contains both articles and the comment that has not been deleted", () => {
+        const store = setupStoreWith1ToNSchema();
+
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_1",
+            comments: [{ id: "comment_1" }]
+          })
+        );
+        store.dispatch(
+          updateEntityAction("articles", {
+            id: "article_2",
+            comments: [{ id: "comment_2" }]
+          })
+        );
+        store.dispatch(deleteEntityAction("comments", "comment_1"));
+
+        expect(store.getState().entities.schemaEntities).toEqual({
+          articles: {
+            article_1: {
+              comments: [],
+              id: "article_1"
+            },
+            article_2: {
+              comments: ["comment_2"],
+              id: "article_2"
+            }
+          },
+          comments: {
+            comment_2: {
+              id: "comment_2"
+            }
+          }
+        });
+      });
+    });
   });
   describe("when receiving UPDATE_ENTITIES action", () => {
     describe("with new entities", () => {
@@ -684,14 +721,14 @@ describe("reducer", () => {
         });
       });
     });
-    describe("with 1000 entities 2 times", () => {
-      const MAX_TIME_FOR_1000_UPDATE = 7000;
+    describe("with 500 entities 2 times", () => {
+      const MAX_TIME_FOR_500_UPDATE = 5000;
 
-      test(`does not take longer than ${MAX_TIME_FOR_1000_UPDATE}`, () => {
+      test(`does not take longer than ${MAX_TIME_FOR_500_UPDATE}`, () => {
         const startTime = Date.now();
         const store = setupStoreWith1ToNSchema();
 
-        const initialEntities = range(0, 1000).map(i => ({
+        const initialEntities = range(0, 500).map(i => ({
           id: `article_${i}`,
           title: `The Article ${i}`,
           comments: [
@@ -706,7 +743,7 @@ describe("reducer", () => {
           ]
         }));
 
-        const updatedEntities = range(0, 1000).map(i => ({
+        const updatedEntities = range(0, 500).map(i => ({
           id: `article_${i}`,
           title: `The Article ${i} [changed]`,
           comments: [
@@ -724,7 +761,7 @@ describe("reducer", () => {
         store.dispatch(updateEntitiesAction("articles", initialEntities));
         store.dispatch(updateEntitiesAction("articles", updatedEntities));
 
-        expect(Date.now() - startTime).toBeLessThan(MAX_TIME_FOR_1000_UPDATE);
+        expect(Date.now() - startTime).toBeLessThan(MAX_TIME_FOR_500_UPDATE);
       });
     });
   });

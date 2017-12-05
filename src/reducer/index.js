@@ -55,7 +55,7 @@ export default function createEntitiesReducer(schemas: SchemaMapType<*>) {
       case UPDATE_ENTITIES:
         return handleUpdateEntities(state, action, schemas);
       case DELETE_ENTITY:
-        return handleDeleteEntity(state, action);
+        return handleDeleteEntity(state, action, schemas);
       default:
         return state;
     }
@@ -90,17 +90,23 @@ function updateEntity(
 
 function handleDeleteEntity(
   state: StateType,
-  action: DeleteEntityActionType
+  action: DeleteEntityActionType,
+  schemas: SchemaMapType<*>
 ): StateType {
   const { schema, id } = action.payload;
+
+  const schemaEntitiesWithoutReferencesToDeletedEntity = mergeEntitiesOfAllSchemas(
+    schemas,
+    state.schemaEntities,
+    updateEntitiesForDeletedEntity(state, schema, id)
+  );
 
   return {
     ...state,
     entityReferences: updateReferencesForDeletedEntity(state, schema, id),
     schemaEntities: {
-      ...state.schemaEntities,
-      ...updateEntitiesForDeletedEntity(state, schema, id),
-      [schema]: omit(state.schemaEntities[schema], id)
+      ...schemaEntitiesWithoutReferencesToDeletedEntity,
+      [schema]: omit(schemaEntitiesWithoutReferencesToDeletedEntity[schema], id)
     }
   };
 }
@@ -146,7 +152,6 @@ function updateEntitiesForDeletedEntity(
     const entityReference: EntityReferenceType =
       referencesToDeletedEntity[referenceID];
     const { fromSchema, fromID, viaField, relationType } = entityReference;
-
     const referencingEntity = state.schemaEntities[fromSchema][fromID];
     const newReferencesValue = relationType === "one"
       ? null
@@ -167,14 +172,14 @@ function updateEntitiesForDeletedEntity(
 
 function mergeEntitiesOfAllSchemas(
   schemas,
-  schemaEntitiesPrevious,
+  schemaEntitiesBefore,
   schemaEntitiesUpdated
 ) {
   return Object.keys(schemas).reduce(
     (nextSchemaEntities, schemaName) => ({
       ...nextSchemaEntities,
       [schemaName]: mergeEntitiesOfSingleSchema(
-        schemaEntitiesPrevious[schemaName] || {},
+        schemaEntitiesBefore[schemaName] || {},
         schemaEntitiesUpdated[schemaName] || {}
       )
     }),
