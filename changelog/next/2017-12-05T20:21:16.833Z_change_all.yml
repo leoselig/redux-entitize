@@ -1,0 +1,6 @@
+dateTime: '2017-12-05T20:21:16.833Z'
+component: all
+kind: change
+description: >-
+  Published package now contains `.js.flow`-files to simplify flow type
+  distribution
