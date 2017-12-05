@@ -5,6 +5,7 @@
 
 # Build output
 /lib
+/coverage
 
 # macOS
 .DS_Store

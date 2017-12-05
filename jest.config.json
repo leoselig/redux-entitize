@@ -1,4 +1,7 @@
 {
+  "setupFiles": [
+    "babel-polyfill"
+  ],
   "testMatch": [
     "**/test/specs/**/*.spec.js"
   ],

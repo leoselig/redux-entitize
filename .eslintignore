@@ -1,3 +1,5 @@
 /index.js
 /lib
 /flow-typed
+/node_modules
+/.git

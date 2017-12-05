@@ -3,3 +3,6 @@ lib/
 
 [include]
 flow-typed/
+
+[version]
+0.56.0

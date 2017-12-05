@@ -30,7 +30,6 @@ rules:
   # ECMAScript 6+ rules
   linebreak-style: 2
   lines-around-comment: 2
-  max-len: 2
   new-parens: 2
   newline-after-var: 2
   newline-before-return: 2

@@ -6,14 +6,51 @@ export type SchemaMapType<SchemasType: string> = {
   [schemaName: SchemasType]: Schema
 };
 
-export type EntityType = Object;
+export type EntityType = { id: string };
 
 export type SchemaEntitiesMapType = {
   [id: string]: EntityType
 };
 
+type RelationTypeType = "one" | "many";
+
+export type SchemaReferenceType = {
+  toSchema: string,
+  viaField: string,
+  relationType: RelationTypeType
+};
+
+export type EntityReferenceType = {
+  fromSchema: string,
+  fromID: string,
+  viaField: string,
+  relationType: RelationTypeType
+};
+
+export type ReferenceMapType<MetaData> = {
+  [toEntity: string]: {
+    [from: string]: MetaData
+  }
+};
+
+export type EntityReferencesType = ReferenceMapType<EntityReferenceType>;
+
+export type SchemaReferencesType = {
+  [referencingSchema: string]: SchemaReferenceType[]
+};
+
+type ByIDMapType<D> = {
+  [id: string]: D
+};
+
+type BySchemaByIDMapType<D> = {
+  [schema: string]: ByIDMapType<D>
+};
+
 export type StateType = {
-  [schema: string]: SchemaEntitiesMapType
+  schemaReferences: SchemaReferencesType,
+  entityReferences: EntityReferencesType,
+  schemaEntities: BySchemaByIDMapType<EntityType>
 };
 
 export type StateWithEntitiesType = {

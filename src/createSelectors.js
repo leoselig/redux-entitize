@@ -1,10 +1,10 @@
 // @flow
 
 import { denormalize } from "normalizr";
+import { createSelector } from "reselect";
 
 import createHashedSelector from "./createHashedSelector";
 import type {
-  EntityType,
   SchemaMapType,
   StateWithEntitiesType,
   PropsWithIdType,
@@ -15,6 +15,11 @@ import type {
 function selectEntitiesState({ entities }: StateWithEntitiesType) {
   return entities;
 }
+
+const selectSchemaEntities = createSelector(
+  [selectEntitiesState],
+  ({ schemaEntities }) => schemaEntities
+);
 
 function selectIdFromProps(
   state: StateWithEntitiesType,
@@ -47,7 +52,7 @@ export default function createSelectors<SchemasType: string>(
     schemaMap
   ).reduce((previousSelectors, schemaName) => {
     const selectEntities = createHashedSelector(
-      [selectEntitiesState],
+      [selectSchemaEntities],
       entities => entities[schemaName]
     );
     const selectAllIds = createHashedSelector([selectEntities], entities =>
@@ -65,38 +70,38 @@ export default function createSelectors<SchemasType: string>(
     };
   }, {});
 
-  function createSelectSingle(schema: SchemasType): ?EntityType {
+  function createSelectSingle(schema: SchemasType) {
     return createHashedSelector(
-      [selectEntitiesState, schemaSelectors[schema].selectIdFromProps],
-      (entitiesState, id) =>
+      [selectSchemaEntities, schemaSelectors[schema].selectIdFromProps],
+      (schemaEntities, id) =>
         denormalize(
           { [schema]: [id] },
           { [schema]: [schemaMap[schema]] },
-          entitiesState
+          schemaEntities
         )[schema][0] || null
     );
   }
 
   function createSelectSome(schema: SchemasType) {
     return createHashedSelector(
-      [selectEntitiesState, schemaSelectors[schema].selectIdsFromProps],
-      (entitiesState, ids) =>
+      [selectSchemaEntities, schemaSelectors[schema].selectIdsFromProps],
+      (schemaEntities, ids) =>
         denormalize(
           { [schema]: ids },
           { [schema]: [schemaMap[schema]] },
-          entitiesState
+          schemaEntities
         )[schema]
     );
   }
 
   function createSelectAll(schema: SchemasType) {
     return createHashedSelector(
-      [selectEntitiesState, schemaSelectors[schema].selectAllIds],
-      (entitiesState, allIds) =>
+      [selectSchemaEntities, schemaSelectors[schema].selectAllIds],
+      (schemaEntities, allIds) =>
         denormalize(
           { [schema]: allIds },
           { [schema]: [schemaMap[schema]] },
-          entitiesState
+          schemaEntities
         )[schema]
     );
   }
@@ -109,6 +114,7 @@ export default function createSelectors<SchemasType: string>(
     };
   }
 
+  // $FlowFixMe: Object.keys() is wrongly inferred here
   const entitySelectorsPerSchema = Object.keys(schemaMap).reduce(
     (schemaSelectorSets, schemaName: SchemasType) => ({
       ...schemaSelectorSets,

@@ -14,31 +14,48 @@ describe("selectors", () => {
       };
       const state = {
         entities: {
-          articles: {
-            article_1: {
-              id: "article_1",
-              title: "Foo Bar 1",
-              comments: ["comment_1", "comment_2"]
-            },
-            article_2: {
-              id: "article_2",
-              title: "Foo Bar 2",
-              comments: []
-            },
-            article_3: {
-              id: "article_3",
-              title: "Foo Bar 3",
-              comments: []
-            }
+          schemaReferences: {
+            articles: [
+              {
+                toSchema: "comments",
+                relationType: "many",
+                viaField: "comments"
+              }
+            ],
+            comments: []
           },
-          comments: {
-            comment_1: {
-              id: "comment_1",
-              title: "Good"
+          entityReferences: {
+            // Normally, it's not possible for this to be empty when entites with references are in
+            // the state. However, selectors do not depend on references in any way, so it's
+            // omitted here for simplicity
+          },
+          schemaEntities: {
+            articles: {
+              article_1: {
+                id: "article_1",
+                title: "Foo Bar 1",
+                comments: ["comment_1", "comment_2"]
+              },
+              article_2: {
+                id: "article_2",
+                title: "Foo Bar 2",
+                comments: []
+              },
+              article_3: {
+                id: "article_3",
+                title: "Foo Bar 3",
+                comments: []
+              }
             },
-            comment_2: {
-              id: "comment_2",
-              title: "Bad"
+            comments: {
+              comment_1: {
+                id: "comment_1",
+                title: "Good"
+              },
+              comment_2: {
+                id: "comment_2",
+                title: "Bad"
+              }
             }
           }
         }

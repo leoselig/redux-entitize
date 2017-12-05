@@ -1,0 +1,8 @@
+dateTime: '2017-10-19T09:07:24.293Z'
+component: reducer
+kind: change
+description: >-
+  Now, when receiving a deletetion action, not only is the entity deleted but
+  also all references to that entity from other entities are removed (e.g. when
+  a comment is deleted, the `comments` in the article does not contain the
+  comment afterwards anymore)
