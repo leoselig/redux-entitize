@@ -685,7 +685,10 @@ describe("reducer", () => {
       });
     });
     describe("with 1000 entities 2 times", () => {
-      test("does not take longer than a fixed threshold", () => {
+      const MAX_TIME_FOR_1000_UPDATE = 7000;
+
+      test(`does not take longer than ${MAX_TIME_FOR_1000_UPDATE}`, () => {
+        const startTime = Date.now();
         const store = setupStoreWith1ToNSchema();
 
         const initialEntities = range(0, 1000).map(i => ({
@@ -720,6 +723,8 @@ describe("reducer", () => {
 
         store.dispatch(updateEntitiesAction("articles", initialEntities));
         store.dispatch(updateEntitiesAction("articles", updatedEntities));
+
+        expect(Date.now() - startTime).toBeLessThan(MAX_TIME_FOR_1000_UPDATE);
       });
     });
   });
