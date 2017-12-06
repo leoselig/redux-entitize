@@ -1,0 +1,6 @@
+dateTime: '2017-12-06T10:04:58.478Z'
+component: all
+kind: fix
+description: >-
+  Fix `EntityType` that broke type checker in dependent projects due to it only
+  stating an object with an `id`-field
