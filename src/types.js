@@ -6,7 +6,7 @@ export type SchemaMapType<SchemasType: string> = {
   [schemaName: SchemasType]: Schema
 };
 
-export type EntityType = { id: string };
+export type EntityType = Object & { id: string };
 
 export type SchemaEntitiesMapType = {
   [id: string]: EntityType
