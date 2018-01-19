@@ -5,11 +5,7 @@ import deepFreeze from "deep-freeze";
 import range from "lodash/range";
 
 import createEntitiesReducer from "../../src/reducer";
-import {
-  updateEntityAction,
-  updateEntitiesAction,
-  deleteEntityAction
-} from "../../src/actions";
+import { updateEntityAction, updateEntitiesAction, deleteEntityAction } from "../../src/actions";
 import { createSpyStore } from "../utils";
 
 describe("reducer", () => {
@@ -66,9 +62,7 @@ describe("reducer", () => {
   describe("schemaReferences", () => {
     describe("without references", () => {
       it("puts no reference for schema into initial state", () => {
-        expect(
-          getInitialState(createReducerWithSingleSchema()).schemaReferences
-        ).toEqual({
+        expect(getInitialState(createReducerWithSingleSchema()).schemaReferences).toEqual({
           articles: []
         });
       });
@@ -76,9 +70,7 @@ describe("reducer", () => {
 
     describe("with reference to 1:1 schema.Entity", () => {
       it("puts reference for schema into initial state", () => {
-        expect(
-          getInitialState(createReducerWith1To1Schema()).schemaReferences
-        ).toEqual({
+        expect(getInitialState(createReducerWith1To1Schema()).schemaReferences).toEqual({
           articles: [
             {
               toSchema: "authors",
@@ -93,9 +85,7 @@ describe("reducer", () => {
 
     describe("with reference to 1:n schema.Entity", () => {
       it("puts reference for schema into initial state", () => {
-        expect(
-          getInitialState(createReducerWith1ToNSchema()).schemaReferences
-        ).toEqual({
+        expect(getInitialState(createReducerWith1ToNSchema()).schemaReferences).toEqual({
           articles: [
             {
               toSchema: "comments",
@@ -120,15 +110,15 @@ describe("reducer", () => {
             title: "Foo Bar"
           })
         );
-        expect(
-          Object.keys(store.getState().entities.schemaEntities.articles)
-        ).toContain("article_1");
+        expect(Object.keys(store.getState().entities.schemaEntities.articles)).toContain(
+          "article_1"
+        );
 
         store.dispatch(deleteEntityAction("articles", "article_1"));
 
-        expect(
-          Object.keys(store.getState().entities.schemaEntities.articles)
-        ).not.toContain("article_1");
+        expect(Object.keys(store.getState().entities.schemaEntities.articles)).not.toContain(
+          "article_1"
+        );
       });
     });
 
@@ -272,8 +262,7 @@ describe("reducer", () => {
           })
         );
 
-        const article1 = store.getState().entities.schemaEntities.articles
-          .article_1;
+        const article1 = store.getState().entities.schemaEntities.articles.article_1;
 
         deepFreeze(article1);
 
@@ -284,10 +273,9 @@ describe("reducer", () => {
           })
         );
 
-        expect(
-          store.getState().entities.schemaEntities.articles.article_1 ===
-            article1
-        ).toEqual(true);
+        expect(store.getState().entities.schemaEntities.articles.article_1 === article1).toEqual(
+          true
+        );
       });
     });
     describe("when updating a known entity", () => {
@@ -379,9 +367,7 @@ describe("reducer", () => {
         }
 
         test("puts entity and nested entity into each state", () => {
-          expect(
-            update1To1Entity().getState().entities.schemaEntities
-          ).toEqual({
+          expect(update1To1Entity().getState().entities.schemaEntities).toEqual({
             articles: {
               article_1: {
                 id: "article_1",
@@ -398,9 +384,7 @@ describe("reducer", () => {
           });
         });
         test("puts entity reference into state", () => {
-          expect(
-            update1To1Entity().getState().entities.entityReferences
-          ).toEqual({
+          expect(update1To1Entity().getState().entities.entityReferences).toEqual({
             "authors#author_1": {
               "articles#article_1.author": {
                 fromID: "article_1",
@@ -445,9 +429,7 @@ describe("reducer", () => {
           return store;
         }
         test("merges old and new entity", () => {
-          expect(
-            update1To1ExistingEntity().getState().entities.schemaEntities
-          ).toEqual({
+          expect(update1To1ExistingEntity().getState().entities.schemaEntities).toEqual({
             articles: {
               article_1: {
                 id: "article_1",
@@ -494,9 +476,7 @@ describe("reducer", () => {
       }
       describe("when updating with a new entity", () => {
         test("puts entity and nested entity into each state", () => {
-          expect(
-            update1ToNEntity().getState().entities.schemaEntities
-          ).toEqual({
+          expect(update1ToNEntity().getState().entities.schemaEntities).toEqual({
             articles: {
               article_1: {
                 id: "article_1",
@@ -554,9 +534,7 @@ describe("reducer", () => {
           return store;
         }
         test("merges old and new entity", () => {
-          expect(
-            updateExisting1ToNEntity().getState().entities.schemaEntities
-          ).toEqual({
+          expect(updateExisting1ToNEntity().getState().entities.schemaEntities).toEqual({
             articles: {
               article_1: {
                 id: "article_1",

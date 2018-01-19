@@ -20,12 +20,7 @@ const STATE_REPLACE_ACTION_TYPE = "STATE_REPLACE_ACTION_TYPE";
 
 function stateReplaceReducer(
   state: StateWithEntitiesType,
-  {
-    type,
-    payload
-  }:
-    | Object
-    | { type: "STATE_REPLACE_ACTION_TYPE", payload: StateWithEntitiesType }
+  { type, payload }: Object | { type: "STATE_REPLACE_ACTION_TYPE", payload: StateWithEntitiesType }
 ): StateWithEntitiesType {
   if (type === STATE_REPLACE_ACTION_TYPE) {
     return payload;
@@ -43,20 +38,11 @@ export function createSpyStore(
   // combineReducers() complains without any reducer on the object so in that
   // case we just default to the identity function as a no-op
   // $FlowFixMe: Not sure what goes wrong here
-  const combinedReducers: Reducer<StateWithEntitiesType, *> = Object.keys(
-    reducers
-  ).length > 0
-    ? combineReducers(reducers)
-    : currentState => currentState;
+  const combinedReducers: Reducer<StateWithEntitiesType, *> =
+    Object.keys(reducers).length > 0 ? combineReducers(reducers) : currentState => currentState;
 
-  function mainReducer(
-    currentState: StateWithEntitiesType,
-    action
-  ): StateWithEntitiesType {
-    const nextState: StateWithEntitiesType = combinedReducers(
-      currentState,
-      action
-    );
+  function mainReducer(currentState: StateWithEntitiesType, action): StateWithEntitiesType {
+    const nextState: StateWithEntitiesType = combinedReducers(currentState, action);
 
     return stateReplaceReducer(nextState, action);
   }

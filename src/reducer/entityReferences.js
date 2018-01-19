@@ -9,11 +9,7 @@ import type {
   SchemaReferenceType,
   SchemaEntitiesMapType
 } from "../types";
-import {
-  addReference,
-  deleteReference,
-  deleteAllReferencesTo
-} from "../referenceTracker";
+import { addReference, deleteReference, deleteAllReferencesTo } from "../referenceTracker";
 
 // This module provides helpers to update the references between entities when they get added,
 // changed or deleted
@@ -86,21 +82,12 @@ function updateReferencesForSingleEntityForSingleSchemaReference(
   entityDataBefore: { id: string }
 ): EntityReferencesType {
   const fromID = entityDataUpdated.id;
-  const nextReferencedIDs = getReferencedIds(
-    entityDataUpdated,
-    schemaReference
-  );
-  const previousReferencedIDs = getReferencedIds(
-    entityDataBefore,
-    schemaReference
-  );
+  const nextReferencedIDs = getReferencedIds(entityDataUpdated, schemaReference);
+  const previousReferencedIDs = getReferencedIds(entityDataBefore, schemaReference);
 
   const { viaField, toSchema, relationType } = schemaReference;
 
-  const referencedIDsToBeAdded = difference(
-    nextReferencedIDs,
-    previousReferencedIDs
-  );
+  const referencedIDsToBeAdded = difference(nextReferencedIDs, previousReferencedIDs);
 
   // Add references for all IDs that appeared
   const referencesWithAdded = referencedIDsToBeAdded.reduce(
@@ -120,10 +107,7 @@ function updateReferencesForSingleEntityForSingleSchemaReference(
   );
 
   // Delete references for all IDs that disappeared
-  const referencedIDsToBeDeleted = difference(
-    previousReferencedIDs,
-    nextReferencedIDs
-  );
+  const referencedIDsToBeDeleted = difference(previousReferencedIDs, nextReferencedIDs);
 
   return referencedIDsToBeDeleted.reduce(
     (entityReferencesCurrent, toId) =>
@@ -152,17 +136,10 @@ export function updateReferencesForDeletedEntity(
   schemaName: string,
   deletedEntityID: string
 ): EntityReferencesType {
-  return deleteAllReferencesTo(
-    state.entityReferences,
-    getReferenceID(schemaName, deletedEntityID)
-  );
+  return deleteAllReferencesTo(state.entityReferences, getReferenceID(schemaName, deletedEntityID));
 }
 
-export function getReferenceID(
-  fromSchema: string,
-  fromID: string,
-  viaField?: string
-) {
+export function getReferenceID(fromSchema: string, fromID: string, viaField?: string) {
   const partWithoutField = `${fromSchema}#${fromID}`;
 
   return viaField ? `${partWithoutField}.${viaField}` : partWithoutField;
