@@ -450,6 +450,40 @@ describe("reducer", () => {
           });
         });
       });
+      describe("when updating a known entity where relation-field is not included", () => {
+        test("keeps previous references of that field", () => {
+          const store = setupStoreWith1To1Schema();
+
+          store.dispatch(
+            updateEntityAction("articles", {
+              id: "article_1",
+              author: {
+                id: "author_1",
+                foo: "stays the same",
+                bar: "will change"
+              }
+            })
+          );
+
+          store.dispatch(
+            updateEntityAction("articles", {
+              id: "article_1"
+              // author is missing here!
+            })
+          );
+
+          expect(store.getState().entities.entityReferences).toEqual({
+            "authors#author_1": {
+              "articles#article_1.author": {
+                fromID: "article_1",
+                fromSchema: "articles",
+                relationType: "one",
+                viaField: "author"
+              }
+            }
+          });
+        });
+      });
     });
     describe("when initilized with an array entity schema", () => {
       function update1ToNEntity() {

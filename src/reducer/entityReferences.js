@@ -82,6 +82,11 @@ function updateReferencesForSingleEntityForSingleSchemaReference(
   entityDataBefore: { id: string }
 ): EntityReferencesType {
   const fromID = entityDataUpdated.id;
+
+  if (!entityDataUpdated.hasOwnProperty(schemaReference.viaField)) {
+    return entityReferencesBefore;
+  }
+
   const nextReferencedIDs = getReferencedIds(entityDataUpdated, schemaReference);
   const previousReferencedIDs = getReferencedIds(entityDataBefore, schemaReference);
 
@@ -122,6 +127,7 @@ function updateReferencesForSingleEntityForSingleSchemaReference(
 
 function getReferencedIds(entity, schemaReference) {
   const { relationType, viaField } = schemaReference;
+
   const fieldValue = entity[viaField];
 
   if (!fieldValue) {
