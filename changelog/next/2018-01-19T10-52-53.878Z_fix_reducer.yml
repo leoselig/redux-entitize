@@ -1,0 +1,8 @@
+dateTime: '2018-01-19T10:52:53.878Z'
+component: reducer
+kind: fix
+description: >-
+  If entities are updated and the new data does not contain a relation field at
+  all, the references of that field are no longer deleted. (E.g. when an article
+  is updated and does not contain an `author`-field anymore, the reference to
+  the author is kept until explicitly removed by `author: null`)

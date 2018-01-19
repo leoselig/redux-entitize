@@ -71,26 +71,16 @@ describe("selectors", () => {
         test("returns the entity data with nested entities", () => {
           const { selectors, state } = setup();
 
-          expect(
-            selectors.selectEntity(state, "articles", "article_1")
-          ).toMatchSnapshot();
+          expect(selectors.selectEntity(state, "articles", "article_1")).toMatchSnapshot();
         });
       });
       describe("when called with indentical arguments multiple times", () => {
         test("returns identical entity", () => {
           const { selectors, state } = setup();
 
-          const output1 = selectors.selectEntity(
-            state,
-            "articles",
-            "article_1"
-          );
+          const output1 = selectors.selectEntity(state, "articles", "article_1");
 
-          const output2 = selectors.selectEntity(
-            state,
-            "articles",
-            "article_1"
-          );
+          const output2 = selectors.selectEntity(state, "articles", "article_1");
 
           expect(output1).toBe(output2);
         });
@@ -100,9 +90,7 @@ describe("selectors", () => {
         test("returns null", () => {
           const { selectors, state } = setup();
 
-          expect(
-            selectors.selectEntity(state, "articles", "article_non_existent")
-          ).toEqual(null);
+          expect(selectors.selectEntity(state, "articles", "article_non_existent")).toEqual(null);
         });
       });
     });
@@ -130,10 +118,7 @@ describe("selectors", () => {
           const { selectors, state } = setup();
 
           expect(
-            selectors.selectEntities(state, "articles", [
-              "article_2",
-              "article_3"
-            ])
+            selectors.selectEntities(state, "articles", ["article_2", "article_3"])
           ).toMatchSnapshot();
         });
 
@@ -141,14 +126,8 @@ describe("selectors", () => {
           test("returns identical entities array", () => {
             const { selectors, state } = setup();
 
-            const output1 = selectors.selectEntities(state, "articles", [
-              "article_2",
-              "article_3"
-            ]);
-            const output2 = selectors.selectEntities(state, "articles", [
-              "article_2",
-              "article_3"
-            ]);
+            const output1 = selectors.selectEntities(state, "articles", ["article_2", "article_3"]);
+            const output2 = selectors.selectEntities(state, "articles", ["article_2", "article_3"]);
 
             expect(output1).toBe(output2);
           });

@@ -41,11 +41,7 @@ describe("referenceTracker", () => {
     describe("and getReferencesTo() is called on target entity", () => {
       it("returns array with two entries for source entities", () => {
         const references1 = addReference({}, "sourceId1", "targetEntity");
-        const references2 = addReference(
-          references1,
-          "sourceId2",
-          "targetEntity"
-        );
+        const references2 = addReference(references1, "sourceId2", "targetEntity");
 
         expect(getReferencesTo(references2, "targetEntity")).toEqual({
           sourceId1: null,
@@ -55,22 +51,10 @@ describe("referenceTracker", () => {
     });
     describe("and one is deleted again", () => {
       function add2Delete1(references) {
-        const references1 = addReference(
-          references,
-          "toBeDeletedEntity",
-          "targetEntity"
-        );
-        const references2 = addReference(
-          references1,
-          "remainingEntity",
-          "targetEntity"
-        );
+        const references1 = addReference(references, "toBeDeletedEntity", "targetEntity");
+        const references2 = addReference(references1, "remainingEntity", "targetEntity");
 
-        return deleteReference(
-          references2,
-          "toBeDeletedEntity",
-          "targetEntity"
-        );
+        return deleteReference(references2, "toBeDeletedEntity", "targetEntity");
       }
 
       describe("and getReferencesTo() is called on target entity", () => {
@@ -84,26 +68,14 @@ describe("referenceTracker", () => {
       });
 
       it("getReferencesTo() for different entity does not change identity", () => {
-        const references1 = addReference(
-          {},
-          "differentSourceEntity",
-          "differentTargetEntity"
-        );
-        const unrelatedReferencesBefore = getReferencesTo(
-          references1,
-          "differentTargetEntity"
-        );
+        const references1 = addReference({}, "differentSourceEntity", "differentTargetEntity");
+        const unrelatedReferencesBefore = getReferencesTo(references1, "differentTargetEntity");
 
         const references2 = add2Delete1(references1);
 
-        const unrelatedReferencesAfter = getReferencesTo(
-          references2,
-          "differentTargetEntity"
-        );
+        const unrelatedReferencesAfter = getReferencesTo(references2, "differentTargetEntity");
 
-        expect(unrelatedReferencesBefore === unrelatedReferencesAfter).toBe(
-          true
-        );
+        expect(unrelatedReferencesBefore === unrelatedReferencesAfter).toBe(true);
       });
     });
   });
@@ -112,15 +84,8 @@ describe("referenceTracker", () => {
       describe("and getReferencesTo() is called for target entity", () => {
         it("returns empty references", () => {
           const references1 = addReference({}, "sourceId1", "targetEntity");
-          const references2 = addReference(
-            references1,
-            "sourceId2",
-            "targetEntity"
-          );
-          const references3 = deleteAllReferencesTo(
-            references2,
-            "targetEntity"
-          );
+          const references2 = addReference(references1, "sourceId2", "targetEntity");
+          const references3 = deleteAllReferencesTo(references2, "targetEntity");
 
           expect(getReferencesTo(references3, "targetEntity")).toEqual({});
         });
