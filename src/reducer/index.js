@@ -70,7 +70,7 @@ function updateEntity(
   schema: string,
   schemas: SchemaMapType<*>
 ): StateType {
-  if (!data.id) {
+  if (typeof data.id === "undefined" || data.id === null) {
     throw new Error(`No 'id'-field found in entitiy of schema '${schema}'`);
   }
 
