@@ -309,6 +309,7 @@ describe("reducer", () => {
         });
       });
     });
+
     describe("without id", () => {
       test("throws an error", () => {
         const store = setupSingleEntityStore();
@@ -320,6 +321,21 @@ describe("reducer", () => {
             })
           );
         }).toThrow("No 'id'-field found in entitiy of schema 'articles'");
+      });
+    });
+
+    describe("with an id being a 0 (evaluates falsy)", () => {
+      test("throws no error (evaluates falsy, but is a valid id)", () => {
+        const store = setupSingleEntityStore();
+
+        expect(() => {
+          store.dispatch(
+            updateEntityAction("articles", {
+              id: 0,
+              title: "ID missing"
+            })
+          );
+        }).not.toThrow();
       });
     });
 

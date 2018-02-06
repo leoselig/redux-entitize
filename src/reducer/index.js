@@ -79,11 +79,7 @@ function updateEntity(
 
   return {
     ...state,
-    schemaEntities: mergeEntitiesOfAllSchemas(
-      schemas,
-      entitiesBefore,
-      entitiesUpdated
-    ),
+    schemaEntities: mergeEntitiesOfAllSchemas(schemas, entitiesBefore, entitiesUpdated),
     entityReferences: updateReferencesForUpdatedEntities(state, entitiesUpdated)
   };
 }
@@ -129,8 +125,7 @@ function handleUpdateEntities(
   const { data, schema } = action.payload;
 
   return data.reduce(
-    (currentState, entityData) =>
-      updateEntity(currentState, entityData, schema, schemas),
+    (currentState, entityData) => updateEntity(currentState, entityData, schema, schemas),
     state
   );
 }
@@ -145,17 +140,13 @@ function updateEntitiesForDeletedEntity(
     getReferenceID(deletedSchemaName, deletedEntityId)
   );
 
-  return Object.keys(
-    referencesToDeletedEntity
-  ).reduce((toBeUpdatedEntities, referenceID) => {
+  return Object.keys(referencesToDeletedEntity).reduce((toBeUpdatedEntities, referenceID) => {
     // $FlowFixMe We are the only one calling addReference() so we know we get the correct reference meta data back here
-    const entityReference: EntityReferenceType =
-      referencesToDeletedEntity[referenceID];
+    const entityReference: EntityReferenceType = referencesToDeletedEntity[referenceID];
     const { fromSchema, fromID, viaField, relationType } = entityReference;
     const referencingEntity = state.schemaEntities[fromSchema][fromID];
-    const newReferencesValue = relationType === "one"
-      ? null
-      : without(referencingEntity[viaField], deletedEntityId);
+    const newReferencesValue =
+      relationType === "one" ? null : without(referencingEntity[viaField], deletedEntityId);
 
     return {
       ...toBeUpdatedEntities,
@@ -170,11 +161,7 @@ function updateEntitiesForDeletedEntity(
   }, {});
 }
 
-function mergeEntitiesOfAllSchemas(
-  schemas,
-  schemaEntitiesBefore,
-  schemaEntitiesUpdated
-) {
+function mergeEntitiesOfAllSchemas(schemas, schemaEntitiesBefore, schemaEntitiesUpdated) {
   return Object.keys(schemas).reduce(
     (nextSchemaEntities, schemaName) => ({
       ...nextSchemaEntities,
