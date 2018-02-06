@@ -2,6 +2,26 @@
 
 ## Version `next`
 
+## Version `0.5.5`
+
+### Fixed
+- **Reducer:** An entity update action no longer causes the reducer to throw if an `id`-field contains the value `0`. Instead, now only `null` or `undefined` are checked as an invariant. (Thanks to [@zachcoyle](https://github.com/zachcoyle))
+
+## Version `0.5.4`
+
+### Fixed
+- **Reducer:** If entities are updated and the new data does not contain a relation field at all, the references of that field are no longer deleted. (E.g. when an article is updated and does not contain an `author`-field anymore, the reference to the author is kept until explicitly removed by `author: null`)
+
+## Version `0.5.3`
+
+### Fixed
+- **All:** Fix `EntityType` that broke type checker in dependent projects due to it only stating an object with an `id`-field
+
+## Version `0.5.2`
+
+### Changed
+- **All:** Published package now contains `.js.flow`-files to simplify flow type distribution
+
 ## Version `0.5.1`
 
 ### Changed

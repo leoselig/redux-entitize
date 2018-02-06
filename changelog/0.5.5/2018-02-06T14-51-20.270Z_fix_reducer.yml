@@ -4,4 +4,4 @@ kind: fix
 description: >-
   An entity update action no longer causes the reducer to throw if an `id`-field
   contains the value `0`. Instead, now only `null` or `undefined` are checked as
-  an invariant.
+  an invariant. (Thanks to [@zachcoyle](https://github.com/zachcoyle))
