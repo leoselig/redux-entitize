@@ -1,0 +1,7 @@
+dateTime: '2018-02-06T14:51:20.270Z'
+component: reducer
+kind: fix
+description: >-
+  An entity update action no longer causes the reducer to throw if an `id`-field
+  contains the value `0`. Instead, now only `null` or `undefined` are checked as
+  an invariant.
