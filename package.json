@@ -13,9 +13,9 @@
     "test-ci": "jest --config=jest.config.json",
     "lint": "yarn run eslint .src ./test",
     "lint-fix": "yarn run lint -- --fix",
-    "flow": "flow",
+    "flow-check": "flow --max-warnings=0",
     "flow-typed": "flow-typed",
-    "ci-pipeline": "yarn run test-ci && yarn run lint && yarn run flow",
+    "ci-pipeline": "yarn run test-ci && yarn run lint && yarn run flow-check",
     "prepublish": "yarn run compile",
     "changelog": "yarn run strangelog",
     "changelog-generate": "strangelog generate --outFile CHANGELOG.md"
