@@ -8,9 +8,7 @@ import type { SchemaMapType, SchemaReferencesType } from "../types";
 //
 // This is not a reducer – just the logic needed to analyze the normalizr schemas
 
-export function getReferencesForSchema(
-  schemas: SchemaMapType<*>
-): SchemaReferencesType {
+export function getReferencesForSchema(schemas: SchemaMapType<*>): SchemaReferencesType {
   const schemaReferences = {};
 
   Object.keys(schemas).forEach(referencingSchemaName => {
@@ -19,10 +17,10 @@ export function getReferencesForSchema(
     schemaReferences[referencingSchemaName] = [];
 
     Object.keys(referencingSchema.schema).forEach(viaField => {
-      const {
-        referencedSchemaName,
-        relationType
-      } = getReferencedSchemaNameForField(referencingSchema, viaField);
+      const { referencedSchemaName, relationType } = getReferencedSchemaNameForField(
+        referencingSchema,
+        viaField
+      );
 
       schemaReferences[referencingSchemaName].push({
         toSchema: referencedSchemaName,

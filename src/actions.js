@@ -9,10 +9,7 @@ export type UpdateEntityActionType = {
     schema: string
   }
 };
-export function updateEntityAction(
-  schema: string,
-  data: Object
-): UpdateEntityActionType {
+export function updateEntityAction(schema: string, data: Object): UpdateEntityActionType {
   return {
     type: UPDATE_ENTITY,
     payload: {
@@ -29,10 +26,7 @@ export type UpdateEntitiesActionType = {
     schema: string
   }
 };
-export function updateEntitiesAction(
-  schema: string,
-  data: Object[]
-): UpdateEntitiesActionType {
+export function updateEntitiesAction(schema: string, data: Object[]): UpdateEntitiesActionType {
   return {
     type: UPDATE_ENTITIES,
     payload: {
@@ -49,10 +43,7 @@ export type DeleteEntityActionType = {
     schema: string
   }
 };
-export function deleteEntityAction(
-  schema: string,
-  id: string
-): DeleteEntityActionType {
+export function deleteEntityAction(schema: string, id: string): DeleteEntityActionType {
   return {
     type: DELETE_ENTITY,
     payload: {

@@ -66,11 +66,7 @@ export type PropsWithIdsType = {
 };
 
 export type SelectorsType<SchemasType: string> = {
-  selectEntity: (
-    state: StateWithEntitiesType,
-    schema: SchemasType,
-    id: string
-  ) => ?EntityType,
+  selectEntity: (state: StateWithEntitiesType, schema: SchemasType, id: string) => ?EntityType,
   selectEntities: (
     state: StateWithEntitiesType,
     schema: SchemasType,

@@ -4,10 +4,7 @@ import omit from "lodash/omit";
 
 import type { ReferenceMapType } from "./types";
 
-export function getReferencesTo(
-  referenceMap: ReferenceMapType<*>,
-  toEntity: string
-) {
+export function getReferencesTo(referenceMap: ReferenceMapType<*>, toEntity: string) {
   return referenceMap[toEntity] || {};
 }
 
@@ -42,9 +39,6 @@ export function deleteReference(
     [toEntity]: newReferencesToEntity
   };
 }
-export function deleteAllReferencesTo(
-  referenceMap: ReferenceMapType<*>,
-  toEntity: string
-) {
+export function deleteAllReferencesTo(referenceMap: ReferenceMapType<*>, toEntity: string) {
   return omit(referenceMap, toEntity);
 }

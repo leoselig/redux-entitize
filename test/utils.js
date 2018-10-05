@@ -37,7 +37,6 @@ export function createSpyStore(
 
   // combineReducers() complains without any reducer on the object so in that
   // case we just default to the identity function as a no-op
-  // $FlowFixMe: Not sure what goes wrong here
   const combinedReducers: Reducer<StateWithEntitiesType, *> =
     Object.keys(reducers).length > 0 ? combineReducers(reducers) : currentState => currentState;
 
