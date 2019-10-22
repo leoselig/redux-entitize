@@ -83,7 +83,7 @@ function updateReferencesForSingleEntityForSingleSchemaReference(
 ): EntityReferencesType {
   const fromID = entityDataUpdated.id;
 
-  if (!entityDataUpdated.hasOwnProperty(schemaReference.viaField)) {
+  if (typeof entityDataUpdated[schemaReference.viaField] === "undefined") {
     return entityReferencesBefore;
   }
 

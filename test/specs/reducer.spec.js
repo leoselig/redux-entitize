@@ -42,21 +42,15 @@ describe("reducer", () => {
   }
 
   function setupSingleEntityStore() {
-    return createSpyStore({
-      entities: createReducerWithSingleSchema()
-    });
+    return createSpyStore(createReducerWithSingleSchema());
   }
 
   function setupStoreWith1To1Schema() {
-    return createSpyStore({
-      entities: createReducerWith1To1Schema()
-    });
+    return createSpyStore(createReducerWith1To1Schema());
   }
 
   function setupStoreWith1ToNSchema() {
-    return createSpyStore({
-      entities: createReducerWith1ToNSchema()
-    });
+    return createSpyStore(createReducerWith1ToNSchema());
   }
 
   describe("schemaReferences", () => {

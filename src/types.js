@@ -1,9 +1,9 @@
 // @flow
 
-import { type Schema } from "normalizr";
+import { schema } from "normalizr";
 
 export type SchemaMapType<SchemasType: string> = {
-  [schemaName: SchemasType]: Schema
+  [schemaName: SchemasType]: schema.Entity
 };
 
 export type EntityType = Object & { id: string };
