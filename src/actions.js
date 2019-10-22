@@ -2,6 +2,11 @@
 
 import { UPDATE_ENTITY, UPDATE_ENTITIES, DELETE_ENTITY } from "./actionTypes";
 
+export type AnyEntityActionType =
+  | UpdateEntityActionType
+  | UpdateEntitiesActionType
+  | DeleteEntityActionType;
+
 export type UpdateEntityActionType = {
   type: "redux-entitize/UPDATE_ENTITY",
   payload: {

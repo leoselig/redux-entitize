@@ -9,49 +9,28 @@ import {
   type Store // eslint-disable-line import/named
 } from "redux";
 
-import type { StateWithEntitiesType } from "../src/types";
+import type { AnyEntityActionType } from "../src/actions";
+import type { StateWithEntitiesType, StateType } from "../src/types";
 
-type SpyStoreType = Store<StateWithEntitiesType, *> & {
-  getActions: () => Object[],
-  replaceState: (newState: StateWithEntitiesType) => void
+type SpyStoreType = {
+  ...Store<StateWithEntitiesType, any>,
+  getActions: () => Object[]
 };
 
-const STATE_REPLACE_ACTION_TYPE = "STATE_REPLACE_ACTION_TYPE";
-
-function stateReplaceReducer(
-  state: StateWithEntitiesType,
-  { type, payload }: Object | { type: "STATE_REPLACE_ACTION_TYPE", payload: StateWithEntitiesType }
-): StateWithEntitiesType {
-  if (type === STATE_REPLACE_ACTION_TYPE) {
-    return payload;
-  }
-
-  return state;
-}
-
 export function createSpyStore(
-  reducers?: { [key: string]: Reducer<Object, *> } = {},
+  entitiesReducer: Reducer<StateType, AnyEntityActionType>,
   middlewares?: Array<*> = []
 ): SpyStoreType {
   const actions = [];
 
   // combineReducers() complains without any reducer on the object so in that
   // case we just default to the identity function as a no-op
-  const combinedReducers: Reducer<StateWithEntitiesType, *> =
-    Object.keys(reducers).length > 0 ? combineReducers(reducers) : currentState => currentState;
-
-  function mainReducer(currentState: StateWithEntitiesType, action): StateWithEntitiesType {
-    const nextState: StateWithEntitiesType = combinedReducers(currentState, action);
-
-    return stateReplaceReducer(nextState, action);
-  }
+  const combinedReducers = combineReducers({ entities: entitiesReducer });
 
   const { dispatch, ...store } = createStore(
-    mainReducer,
+    combinedReducers,
     applyMiddleware(...middlewares, () => next => (action: Object) => {
-      if (action.type !== STATE_REPLACE_ACTION_TYPE) {
-        actions.push(action);
-      }
+      actions.push(action);
 
       return next(action);
     })
@@ -62,12 +41,6 @@ export function createSpyStore(
     dispatch: (dispatch: any), // eslint-disable-line flowtype/no-weak-types
     getActions() {
       return actions;
-    },
-    replaceState(newState) {
-      dispatch({
-        type: STATE_REPLACE_ACTION_TYPE,
-        payload: newState
-      });
     }
   };
 }

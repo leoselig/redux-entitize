@@ -32,8 +32,8 @@ function selectIdsFromProps(state: StateWithEntitiesType, { ids }: PropsWithIdsT
 export default function createSelectors<SchemasType: string>(
   schemaMap: SchemaMapType<SchemasType>
 ): SelectorsType<SchemasType> {
-  function ensureExistentSchema(schema: string) {
-    if (!schemaMap.hasOwnProperty(schema)) {
+  function ensureExistentSchema(schema: SchemasType) {
+    if (typeof schemaMap[schema] === "undefined") {
       throw new Error(
         `Received unknown schema '${schema}'. Known schemas are [${Object.keys(schemaMap).join(
           ", "
