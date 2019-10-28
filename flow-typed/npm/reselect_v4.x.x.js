@@ -1,5 +1,5 @@
-// flow-typed signature: 938c04c65dd4baa37db42e06fed9386b
-// flow-typed version: 89b0d35e3a/reselect_v3.x.x/flow_>=v0.104.x
+// flow-typed signature: 6e52cb2cbf619ada2372cc5ec183f876
+// flow-typed version: 89b0d35e3a/reselect_v4.x.x/flow_>=v0.104.x
 
 type ExtractReturnType = <Return>((...rest: any[]) => Return) => Return;
 
