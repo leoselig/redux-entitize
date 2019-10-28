@@ -74,6 +74,7 @@ describe("selectors", () => {
           expect(selectors.selectEntity(state, "articles", "article_1")).toMatchSnapshot();
         });
       });
+
       describe("when called with indentical arguments multiple times", () => {
         test("returns identical entity", () => {
           const { selectors, state } = setup();
@@ -83,6 +84,18 @@ describe("selectors", () => {
           const output2 = selectors.selectEntity(state, "articles", "article_1");
 
           expect(output1).toBe(output2);
+        });
+      });
+
+      describe("when called with different arguments twice in a row", () => {
+        test("returns correct entities both times", () => {
+          const { selectors, state } = setup();
+
+          const output1 = selectors.selectEntity(state, "articles", "article_1");
+          const output2 = selectors.selectEntity(state, "articles", "article_2");
+
+          expect(output1).toMatchObject({ id: "article_1" });
+          expect(output2).toMatchObject({ id: "article_2" });
         });
       });
 
